@@ -53,9 +53,9 @@
 	
 	<div id="task" class="easyui-dialog" closed="true">
 		<form id="taskForm" style="margin: 10px 10px" method="post">
-			<input id="userId" name="userId" type="hidden">
+			<!-- <input id="userId" name="userId" type="hidden">
 			<p><input id="userName" type="test" readonly="readonly" style="height: 26px">
-			<a class="easyui-linkbutton" icon="icon-search" href="javascript:void(0)" onclick="chooseUser();">选择委派人</a></p>
+			<a class="easyui-linkbutton" icon="icon-search" href="javascript:void(0)" onclick="chooseUser();">选择委派人</a></p> -->
 		</form>
 	</div>
 	

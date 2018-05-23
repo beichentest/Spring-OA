@@ -13,6 +13,7 @@ import com.zml.oa.entity.ExpenseAccount;
 import com.zml.oa.entity.SalaryAdjust;
 import com.zml.oa.entity.User;
 import com.zml.oa.entity.Vacation;
+import com.zml.oa.entity.WorkOrder;
 import com.zml.oa.pagination.Page;
 
 public interface IProcessService {
@@ -203,5 +204,18 @@ public interface IProcessService {
      * @throws Exception
      */
     public void addProcessByDynamic() throws Exception;
+    /**
+     * 查看正在运行的工单流程
+     * @param user
+     * @param p
+     * @return
+     */
+	public List<BaseVO> listRuningWorkOrder(User user, Page<WorkOrder> p) throws Exception;
+	/**
+	 * 启动工单流程
+	 * @param workOrder
+	 * @return
+	 */
+	public String startWordOrder(WorkOrder workOrder)throws Exception;
 
 }

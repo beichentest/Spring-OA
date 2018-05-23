@@ -266,7 +266,7 @@ public class WorkflowService {
         if (assignee != null) {
         	User assigneeUser = this.userService.getUserById(new Integer(assignee));
         	if(!BeanUtils.isBlank(assigneeUser)){
-        		vars.put("当前处理人", assigneeUser.getName());
+        		vars.put("当前处理人", assigneeUser.getRealName());
         	}else{
         		vars.put("当前处理人", "不存在！");
         	}

@@ -20,6 +20,7 @@ import com.zml.oa.entity.Message;
 import com.zml.oa.pagination.Page;
 import com.zml.oa.service.IGroupAndResourceService;
 import com.zml.oa.service.IGroupService;
+import com.zml.oa.service.IUserService;
 import com.zml.oa.util.BeanUtils;
 
 @Controller
@@ -32,6 +33,9 @@ public class GroupAction {
 	
 	@Autowired
 	private IGroupAndResourceService grService;
+	
+	@Autowired
+	private IUserService userService;
 	
 	@RequestMapping("/getAll")
 	public String toList(Model model) throws Exception{
@@ -137,6 +141,9 @@ public class GroupAction {
 	@RequestMapping(value = "/doAdd", method = RequestMethod.POST)
 	@ResponseBody
 	public Message doAdd(@ModelAttribute Group group) throws Exception{
+		if(group.getLeader()!=null&&group.getLeader().getId()!=null) {
+			group.setLeader(userService.getUserById(group.getLeader().getId()));
+		}
 		this.groupService.doAdd(group);
 		return new Message(Boolean.TRUE, "添加成功！");
 	}
@@ -150,6 +157,9 @@ public class GroupAction {
 	@RequestMapping(value = "/doUpdate", method = RequestMethod.POST)
 	@ResponseBody
 	public Message doUpdate(@ModelAttribute Group group) throws Exception{
+		if(group.getLeader()!=null&&group.getLeader().getId()!=null) {
+			group.setLeader(userService.loadUserById(group.getLeader().getId()));
+		}
 		this.groupService.doUpdate(group);
 		return new Message(Boolean.TRUE, "更新成功！");
 	}

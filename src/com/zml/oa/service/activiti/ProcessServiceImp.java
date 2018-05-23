@@ -1,6 +1,5 @@
 package com.zml.oa.service.activiti;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +45,6 @@ import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.spring.ProcessEngineFactoryBean;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +60,7 @@ import com.zml.oa.entity.Salary;
 import com.zml.oa.entity.SalaryAdjust;
 import com.zml.oa.entity.User;
 import com.zml.oa.entity.Vacation;
+import com.zml.oa.entity.WorkOrder;
 import com.zml.oa.pagination.Page;
 import com.zml.oa.service.IExpenseService;
 import com.zml.oa.service.IProcessService;
@@ -69,6 +68,7 @@ import com.zml.oa.service.ISalaryAdjustService;
 import com.zml.oa.service.ISalaryService;
 import com.zml.oa.service.IUserService;
 import com.zml.oa.service.IVacationService;
+import com.zml.oa.service.IWorkOrderService;
 import com.zml.oa.util.BeanUtils;
 
 /**
@@ -123,6 +123,8 @@ public class ProcessServiceImp implements IProcessService{
 	@Autowired
 	private ProcessEngine processEngine;
 	
+	@Autowired
+	private IWorkOrderService workOrderService;
 	
     /**
      * 查询代办任务
@@ -756,5 +758,58 @@ public class ProcessServiceImp implements IProcessService{
 		ExclusiveGateway gateway = new ExclusiveGateway();
 		gateway.setId(id);
 		return gateway;
+	}
+	/**
+	 * 查看正在运行的工单流程
+	 * @throws Exception 
+	 */
+	@Override
+	public List<BaseVO> listRuningWorkOrder(User user, Page<WorkOrder> page) throws Exception {
+		List<WorkOrder> listWorkOrder = this.workOrderService.findByStatus(user.getId(), BaseVO.PENDING, page);
+		List<BaseVO> result = new ArrayList<BaseVO>();
+		if(listWorkOrder != null ){
+			for (WorkOrder wo : listWorkOrder) {
+				if(wo.getProcInstId() == null){
+					continue;
+				}
+				// 查询流程实例
+				ProcessInstance pi = this.runtimeService
+						.createProcessInstanceQuery()
+						.processInstanceId(wo.getProcInstId())
+						.singleResult();
+				Task task = this.taskService.createTaskQuery().processInstanceId(wo.getProcInstId()).singleResult();
+				if (pi != null) {
+					// 查询流程参数
+					BaseVO base = (BaseVO) this.runtimeService.getVariable(pi.getId(), "entity");
+					base.setTask(task);
+		            base.setProcessInstance(pi);
+		            base.setProcessDefinition(getProcessDefinition(pi.getProcessDefinitionId()));
+					result.add(base);
+				}
+			}
+		}
+		return result;
+	}
+	/**
+	 * 启动工单流程
+	 */
+	@Override
+	public String startWordOrder(WorkOrder workOrder) throws Exception {
+		// 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
+        identityService.setAuthenticatedUserId(workOrder.getApplyUserId().toString());
+        Map<String, Object> variables = new HashMap<String, Object>();
+        variables.put("entity", workOrder);
+        variables.put("coderId", workOrder.getCoderId().toString());
+        variables.put("lastId", workOrder.getApplyUserId());
+        variables.put("applyUserId", workOrder.getApplyUserId().toString());
+        String businessKey = workOrder.getBusinessKey();
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("WorkOrder", businessKey, variables);
+        String processInstanceId = processInstance.getId();
+        workOrder.setProcInstId(processInstanceId);
+        this.workOrderService.doUpdate(workOrder);
+        logger.info("processInstanceId: "+processInstanceId);
+        //最后要设置null，就是这么做，还没研究为什么
+        this.identityService.setAuthenticatedUserId(null);
+        return processInstanceId;
 	}
 }

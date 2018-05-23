@@ -25,6 +25,13 @@ public class BaseVO implements Serializable{
 	public final static String VACATION = "vacation";	
 	public final static String SALARY = "salary";	
 	public final static String EXPENSE = "expense";
+	public final static String WORKORDER = "workorder";
+	
+	//工单流程各个节点key
+	public final static String WORKORDER_AUDIT_BUSINESS = "business";
+	public final static String WORKORDER_AUDIT_CODER = "coder";
+	public final static String WORKORDER_AUDIT_TEST = "test";
+	public final static String WORKORDER_AUDIT_WEBMASTER = "webmaster";
 	
 	// 待办任务标识
 	public final static String CANDIDATE = "candidate";
@@ -47,7 +54,10 @@ public class BaseVO implements Serializable{
 	//审批失败
 	public static final String APPROVAL_FAILED = "APPROVAL_FAILED";
 	
-	
+	/**
+	 * 项目状态 正常线上
+	 */
+	public final static String PROJECT_STATUS_ONLINE = "0"; 
 	// 申请人id
 	private Integer user_id;
 	

@@ -395,6 +395,7 @@ public class UserAction {
 			Map<String, Object> map=new HashMap<String, Object>();
 			map.put("id", user.getId());
 			map.put("name", user.getName());
+			map.put("realName", user.getRealName());
 			map.put("group", user.getGroup().getName());
 			map.put("registerDate", user.getRegisterDate());
 			jsonList.add(map);

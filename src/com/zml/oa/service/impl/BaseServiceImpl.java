@@ -215,5 +215,11 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
         	return Collections.emptyList();
         }
 	}
+
+	@Override
+	public T loadBean(Class<T> obj, Serializable id) throws Exception {
+		return this.baseDao.loadBean(obj, id);
+	}
+	
 	
 }

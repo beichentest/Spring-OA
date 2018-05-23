@@ -70,6 +70,8 @@ function showToDoTask(){
                 			return "薪资调整";
                 		}else if(value == "expense"){
                 			return "报销申请";
+                		}else if(value == "workorder"){
+                			return "工单申请";
                 		}
 					}
                 },
@@ -131,6 +133,8 @@ function showEndTask(){
                 			return "薪资调整";
                 		}else if(value == "expense"){
                 			return "报销申请";
+                		}else if(value == "workorder"){
+                			return "工单申请";
                 		}
 					}
                 },
@@ -215,6 +219,9 @@ function approvalFormInit( taskDefinitionKey, businessType, taskId ) {
 	}else if("expense" == businessType){
 		//正常审批
 		_url = ctx+'/expenseAction/complate/'+taskId;
+	}else if("workorder" == businessType){
+		//正常审批
+		_url = ctx+'/workOrderAction/complate/'+taskId;
 	}
 	audit_form = $('#audit_form').form({
         url: _url,
@@ -260,6 +267,8 @@ function handleTask(){
     			_url = ctx + "/salaryAction/toApproval/"+row.taskId;
     		}else if("expense" == row.businessType){
     			_url = ctx + "/expenseAction/toApproval/"+row.taskId;
+    		}else if("workorder" == row.businessType){
+    			_url = ctx + "/workOrderAction/transferAction/"+row.taskId;
     		}
     		
     		//弹出对话窗口
@@ -289,7 +298,7 @@ function handleTask(){
     			        	  }
     			          },
     			          {
-    			        	  text: '不通过',
+    			        	  text: '驳回',
     			        	  iconCls: 'icon-remove',
     			        	  handler: function () {
     			        		  $("#completeFlag").val("false");
@@ -328,6 +337,26 @@ function handleTask(){
         			        		  audit_form.submit();
         			        	  }
         			          },
+        			          {
+        			        	  text: '关闭',
+        			        	  iconCls: 'icon-cancel',
+        			        	  handler: function () {
+        			        		  audit_dialog.dialog('destroy');
+        			        	  }
+        			          }
+        			]
+    			})
+    		}else if(row.taskDefinitionKey=="businessUpdate"){
+    			audit_dialog.dialog({
+    				buttons: [
+        			          {
+        			        	  text: '重新申请',
+        			        	  iconCls: 'icon-ok',
+        			        	  handler: function () {
+        			        		  $("#reApply").val("true");
+        			        		  audit_form.submit();
+        			        	  }
+        			          },        			         
         			          {
         			        	  text: '关闭',
         			        	  iconCls: 'icon-cancel',
@@ -383,7 +412,7 @@ function claimTask(){
 }
 
 //选择委派人窗口
-function chooseUser(){
+function chooseUser(){	
 	//弹出对话窗口
 	user_dialog = $('<div/>').dialog({
     	title : "选择任务委派人",

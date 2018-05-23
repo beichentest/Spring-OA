@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
@@ -46,6 +47,10 @@ public class Group implements Serializable{
 	@JoinColumn(name="GROUP_ID",updatable=false)
 	@JsonIgnore
     private Set<User> user = new HashSet<User>();
+	
+	@OneToOne(targetEntity=User.class,cascade=CascadeType.ALL)
+	@JoinColumn(name="LEADER",updatable=true)
+	private User leader;
     
 	public Group(){
 		
@@ -85,6 +90,14 @@ public class Group implements Serializable{
 
 	public void setUser(Set<User> user) {
 		this.user = user;
+	}
+
+	public User getLeader() {
+		return leader;
+	}
+
+	public void setLeader(User leader) {
+		this.leader = leader;
 	}
 
 	public static long getSerialversionuid() {

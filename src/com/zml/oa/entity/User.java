@@ -78,6 +78,9 @@ public class User implements Serializable{
 	@JoinColumn(name="GROUP_ID")
 	@JsonIgnore
     private Group group;
+	
+	@Column(name = "REAL_NAME")
+	private String realName;
     
 	public User(){
 		
@@ -156,4 +159,11 @@ public class User implements Serializable{
         return name + salt;
     }
 
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
 }

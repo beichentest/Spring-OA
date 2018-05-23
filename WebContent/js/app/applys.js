@@ -15,9 +15,11 @@ $(function() {
 	$('#tabs').tabs({
 	    border:false,
 	    onSelect:function(title,index){
-	        if(index == 0){
+	    	if(index == 0){
+	    		showApply("workorder");
+	    	}else if(index == 1){
 	        	showApply("vacation");
-	        }else if(index == 1){
+	        }else if(index == 2){
 	        	showApply("salary");
 	        }else{
 	        	showApply("expense");

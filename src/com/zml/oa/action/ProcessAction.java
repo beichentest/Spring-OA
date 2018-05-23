@@ -49,6 +49,7 @@ import com.zml.oa.entity.ProcessInstanceEntity;
 import com.zml.oa.entity.SalaryAdjust;
 import com.zml.oa.entity.User;
 import com.zml.oa.entity.Vacation;
+import com.zml.oa.entity.WorkOrder;
 import com.zml.oa.pagination.Page;
 import com.zml.oa.service.IProcessService;
 import com.zml.oa.service.IUserService;
@@ -755,6 +756,11 @@ public class ProcessAction {
     		//报销
     		Page<ExpenseAccount> p = new Page<ExpenseAccount>(page, rows);
     		baseVO = this.processService.listRuningExpense(user, p);
+    		total = p.getTotal();
+    	}else if(BaseVO.WORKORDER.equals(businessType)){
+    		//工单
+    		Page<WorkOrder> p = new Page<WorkOrder>(page, rows);
+    		baseVO = this.processService.listRuningWorkOrder(user, p);
     		total = p.getTotal();
     	}
     	List<Object> jsonList=new ArrayList<Object>(); 

@@ -1,6 +1,7 @@
 ﻿<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<script type="text/javascript" src="${ctx}/js/app/permission.js?_=${sysInitTime}"></script>
 <style type="text/css">
     #fm{
         margin:0;
@@ -36,6 +37,11 @@
             <label>组类型:</label>
             <input id="type" name="type" class="easyui-textbox easyui-validatebox" required="true">
         </div>
+        <div class="fitem">
+            <label>组长:</label>
+            <input id="userName" type="text" readonly="readonly" style="height: 23px">
+            <!--input id="userName" name="leader" class="easyui-textbox easyui-validatebox" required="true" readonly="readonly"-->
+            <input id="userId" name="leader.id" type="hidden"><a class="easyui-linkbutton" icon="icon-search" href="javascript:void(0)" onclick="chooseUser();">选择委派人</a>
+        </div>
     </form>
 </div>
-

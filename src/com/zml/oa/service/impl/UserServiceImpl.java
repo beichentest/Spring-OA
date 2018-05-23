@@ -283,4 +283,9 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements IUserServi
 		return list;
 	}
 
+	@Override
+	public User loadUserById(Integer id) throws Exception {
+		return loadBean(User.class, id);
+	}
+
 }

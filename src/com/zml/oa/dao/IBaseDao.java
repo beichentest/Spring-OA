@@ -97,4 +97,7 @@ public interface IBaseDao<T> {
 	 * @return
 	 */
 	public Long count(String hql);
+	
+	
+	public T loadBean(Class<T> obj, Serializable id) throws Exception;
 }

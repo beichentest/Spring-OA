@@ -62,6 +62,12 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	public T loadBean(Class<T> obj, Serializable id) throws Exception{
+		return (T) getSession().load(obj, id);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<T> findByPage(String hql, int firstResult, int maxResult) throws Exception{
 		Session session=sessionFactory.getCurrentSession();
 		Query query = session.createQuery(hql);

@@ -67,6 +67,8 @@ public interface IUserService {
      * @throws Exception
      */
     public void deleteAllActivitiIdentifyData() throws Exception;
+    
+    public User loadUserById(Integer id) throws Exception;
 }
 
 

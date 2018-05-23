@@ -19,7 +19,7 @@
 	 <div class="well well-small" style="margin-left: 5px;margin-top: 5px;">
 		<span class="badge easyui-tooltip" title="提示">提示</span>
 		<p>
-			在此你可以查看您所提交的<span class="label-info"><strong>请假申请</strong></span>、<span class="label-info"><strong>薪资调整申请</strong></span>、
+			在此你可以查看您所提交的<span class="label-info"><strong>工单申请</strong></span>、<span class="label-info"><strong>请假申请</strong></span>、<span class="label-info"><strong>薪资调整申请</strong></span>、
 			<span class="label-info"><strong>报销申请</strong></span>，并查看其审批状态。
 		</p>
 	 </div>	
@@ -33,6 +33,9 @@
 		</table>
 	 </div>
 	 <div id="tabs" class="easyui-tabs">
+	 	<div title="工单申请" closable="true" style="padding:10px;">
+			<table id="workorder_datagrid" title="工单申请"></table>
+		</div>
 		<div title="请假申请" closable="true" data-options="selected:true" style="padding:10px;">
 			<table id="vacation_datagrid" title="请假申请"></table>
 		</div>

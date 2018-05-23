@@ -22,9 +22,10 @@ $(function() {
             [ 
               {field:'ck', title : '#',width : fixWidth(0.1),align : 'center',
             	  formatter:function(value,row){
-            		  return '<input type="radio" name="id" value="'+row.id+'" onclick="selectUser(\''+row.id+'\',\''+row.name+'\');" />';
+            		  return '<input type="radio" name="id" value="'+row.id+'" onclick="selectUser(\''+row.id+'\',\''+row.realName+'\');" />';
 				  }
               },
+              {field : 'realName',title : '真实姓名',width : fixWidth(0.3),align : 'center'},
               {field : 'name',title : '用户名',width : fixWidth(0.3),align : 'center'},
               {field : 'registerDate', title : '注册时间', width : fixWidth(0.3),align : 'center'},
               {field : 'group',title : '用户组',width : fixWidth(0.3),align : 'center'}
@@ -56,7 +57,7 @@ $(function() {
 });
 
 //选择委派人，对父页面赋值
-function selectUser( userId, userName ){
+function selectUser( userId, userName ){	
 	$("#userId", window.parent.document).val(userId);
 	$("#userName", window.parent.document).val(userName);
 	//window.parent.closeDialogFrame();

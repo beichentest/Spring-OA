@@ -40,6 +40,7 @@ public class UserLeaderTaskListener implements TaskListener {
 			if(user!=null) {
 				delegateTask.setAssignee(user.getGroup().getLeader().getId().toString());
 				logger.info("assignee leader id: "+user.getGroup().getLeader().getId().toString());
+				logger.info("给受理人"+user.getGroup().getLeader().getRealName()+"发送邮件通知"+user.getGroup().getLeader().getEmail());
 			}else {
 				throw new Exception("未查出用户信息");
 			}

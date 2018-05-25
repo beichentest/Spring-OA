@@ -18,5 +18,9 @@ public class ProjectServiceImpl implements IProjectService {
 	public List<Project> findByOnline() throws Exception {
 		return baseService.findByWhere("Project", new String[] {"status"}, new String[] {BaseVO.PROJECT_STATUS_ONLINE});
 	}
+	@Override
+	public Project getProjectById(Integer id) throws Exception {
+		return baseService.getUnique("Project", new String[] {"id"}, new String[] {id.toString()});
+	}
 
 }

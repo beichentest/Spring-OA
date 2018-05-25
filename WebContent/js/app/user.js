@@ -21,6 +21,7 @@ $(function() {
         columns : [ 
             [ 
               {field : 'name',title : '用户名',width : fixWidth(0.2),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
+              {field : 'realName',title : '真实姓名',width : fixWidth(0.2),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
               {field : 'passwd',title : '密码',width : fixWidth(0.2),align : 'left',editor : {type:'validatebox',options:{required:true}}},
               {field : 'registerDate', title : '注册时间', width : fixWidth(0.2), editor : "datebox"},
               {field : 'locked',title : '状态',width : fixWidth(0.2),

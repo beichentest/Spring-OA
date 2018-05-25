@@ -50,6 +50,10 @@ $(function(){
             <input id="name" name="name" class="easyui-textbox easyui-validatebox" required="true">
         </div>
         <div class="fitem">
+            <label>真实姓名:</label>
+            <input id="realName" name="realName" class="easyui-textbox easyui-validatebox" required="true">
+        </div>
+        <div class="fitem">
             <label>密码:</label>
             <input type="password" id="passwd"
                    name="passwd" class="easyui-textbox easyui-validatebox" maxLength="36"

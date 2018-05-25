@@ -14,6 +14,7 @@ import org.activiti.engine.TaskService;
 import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import com.zml.oa.service.IProjectService;
 import com.zml.oa.service.IVacationService;
 import com.zml.oa.service.IWorkOrderService;
 import com.zml.oa.util.BeanUtils;
+import com.zml.oa.util.DateUtil;
 import com.zml.oa.util.UserUtil;
 
 /**
@@ -152,6 +154,7 @@ public class WorkOrderAction {
         workOrder.setStatus(BaseVO.PENDING);
         workOrder.setBusinessType(BaseVO.WORKORDER);
         workOrder.setTitle(user.getRealName()+"的工单");
+        workOrder.setProject(projectService.getProjectById(workOrder.getProject().getId()));
         this.workOrderService.doAdd(workOrder);
         String businessKey = workOrder.getId().toString();
         workOrder.setBusinessKey(businessKey);
@@ -254,7 +257,7 @@ public class WorkOrderAction {
     		WorkOrder baseWorkOrder = (WorkOrder) this.runtimeService.getVariable(processInstanceId, "entity");
     		Map<String, Object> variables = new HashMap<String, Object>();
     		String taskDefKey = task.getTaskDefinitionKey();
-    		if("businessAudit".equals(taskDefKey)) {
+    		if("businessAudit".equals(taskDefKey)) {  //申请人部门审核
 	    		variables.put("isPass", completeFlag);
 	    		baseWorkOrder.setBusinessAuditUserId(user.getId());
 	    		baseWorkOrder.setBusinessAuditUser(user.getRealName());
@@ -262,6 +265,8 @@ public class WorkOrderAction {
 	    		if(!completeFlag){
 	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请失败,需修改后重新提交！");
 	    			baseWorkOrder.setStatus(BaseVO.APPROVAL_FAILED);    			
+	    		}else {
+	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请！");
 	    		}
 	    		if(completeFlag){
 	    			//此处需要修改，不能根据人来判断审批是否结束。应该根据流程实例id(processInstanceId)来判定。
@@ -271,16 +276,74 @@ public class WorkOrderAction {
 	    				baseWorkOrder.setStatus(BaseVO.APPROVAL_SUCCESS);
 	    			}
 	    		}
-    		}else if("businessUpdate".equals(taskDefKey)) {
-    			baseWorkOrder.setProject(workOrder.getProject());
+    		}else if("businessUpdate".equals(taskDefKey)) {    //申请人修改
+    			baseWorkOrder.setProject(projectService.getProjectById( workOrder.getProject().getId()));
     			baseWorkOrder.setDomain(workOrder.getDomain());
     			baseWorkOrder.setCoder(workOrder.getCoder());
     			baseWorkOrder.setCoderId(workOrder.getCoderId());
     			baseWorkOrder.setDevelopExplain(workOrder.getDevelopExplain());
+    			baseWorkOrder.setApplyDate(new Date());
     			baseWorkOrder.setStatus(BaseVO.PENDING);
     			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请,修改后重新提交！");
+    		}else if("coder".equals(taskDefKey)||"coderUpdate".equals(taskDefKey)) {    //开发人员录入 coderUpdate
+    			variables.put("coderId", user.getId().toString());
+    			baseWorkOrder.setDevelopExplain(workOrder.getDevelopExplain());
+    			baseWorkOrder.setCoder(user.getRealName());
+    			baseWorkOrder.setCoderId(user.getId());
+    			baseWorkOrder.setCoderSvn(workOrder.getCoderSvn());
+    			baseWorkOrder.setCoderVersion(workOrder.getCoderVersion());
+    			baseWorkOrder.setCoderDate(new Date());
+    		}else if("coderAudit".equals(taskDefKey)) { //开发部门审核
+    			variables.put("isPass", completeFlag);
+    			baseWorkOrder.setCoderAudit(user.getRealName());
+    			baseWorkOrder.setCoderAuditDate(new Date());
+    			baseWorkOrder.setCoderAuditId(user.getId());
+    			if(!completeFlag){
+	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请开发审核失败,需修改后重新提交！");
+	    			baseWorkOrder.setStatus(BaseVO.APPROVAL_FAILED);    			
+	    		}else {
+	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请！");
+	    			baseWorkOrder.setStatus(BaseVO.PENDING);
+	    		}
+    		}else if("tester".equals(taskDefKey)||"testerUpdate".equals(taskDefKey)) { //测试
+    			variables.put("testerId", user.getId().toString());
+    			baseWorkOrder.setTester(user.getRealName());
+    			baseWorkOrder.setTesterId(user.getId());
+    			baseWorkOrder.setTesterDate(new Date());
+    			baseWorkOrder.setTestSvn(workOrder.getTestSvn());
+    			baseWorkOrder.setTestVersion(workOrder.getTestVersion());
+    		}else if("testerAudit".equals(taskDefKey)) { //测试部门审核
+    			variables.put("isPass", completeFlag);
+    			baseWorkOrder.setTesterAudit(user.getRealName());
+    			baseWorkOrder.setTesterAuditId(user.getId());
+    			baseWorkOrder.setTestAuditDate(new Date());    			    			
+    			if(!completeFlag){
+	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请开发审核失败,需修改后重新提交！");
+	    			baseWorkOrder.setStatus(BaseVO.APPROVAL_FAILED);    			
+	    		}else {
+	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请！");
+	    			baseWorkOrder.setStatus(BaseVO.PENDING);
+	    		}
+    		}else if("webmaster".equals(taskDefKey)) { //运维    			
+    			variables.put("rollback", completeFlag);
+    			baseWorkOrder.setWebMaster(user.getRealName());
+    			baseWorkOrder.setWebMasterId(user.getId());
+    			baseWorkOrder.setDeployDate(new Date());
+    			if(completeFlag) {
+    				baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单部署失败回滚,需修改后重新提交！");
+    			}else {
+    				baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请！");
+    			}
+    		}else if("webmasterAudit".equals(taskDefKey)) {
+    			baseWorkOrder.setWebMasterAudit(user.getRealName());
+    			baseWorkOrder.setWebMasterAuditId(user.getId());
+    			baseWorkOrder.setWebMasterAuditDate(new Date());
+    		}else if("applyConfirm".equals(taskDefKey)) {
+    			baseWorkOrder.setVerifyDate(new Date());
+    			baseWorkOrder.setStatus(BaseVO.APPROVAL_SUCCESS);
     		}
     		variables.put("entity", baseWorkOrder);
+    		variables.put("lastId", user.getId());
     		// 完成任务
     		this.processService.complete(taskId, content, user.getId().toString(), variables);
     		this.workOrderService.doUpdate(baseWorkOrder);
@@ -312,27 +375,118 @@ public class WorkOrderAction {
 	 */
 	@RequestMapping("/businessUpdate")
 	public String businessUpdate(@ModelAttribute("taskId") String taskId,Model model) throws NumberFormatException, Exception{
+		String result = "workOrder/edit_workOrder";
+		searchTask(taskId, model);
+    	return result;
+	}
+	/**
+	 * 开发录入/修改
+	 * @param taskId
+	 * @param model
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws Exception
+	 */
+	@RequestMapping(value= {"/coder","/coderUpdate"})
+	public String coder(@ModelAttribute("taskId") String taskId,Model model) throws NumberFormatException, Exception{
+		String result = "workOrder/form_coder";
+		searchTask(taskId, model);
+    	return result;
+	}
+	/**
+	 * 开发审核
+	 * @param taskId
+	 * @param model
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws Exception
+	 */
+	@RequestMapping(value= {"/coderAudit"})
+	public String coderAudit(@ModelAttribute("taskId") String taskId,Model model) throws NumberFormatException, Exception{
+		String result = "workOrder/form_coder_audit";
+		searchTask(taskId, model);
+    	return result;
+	}	
+	/**
+	 * 测试录入
+	 * @param taskId
+	 * @param model
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws Exception
+	 */
+	@RequestMapping(value= {"/tester","testerUpdate"})
+	public String tester(@ModelAttribute("taskId") String taskId,Model model) throws NumberFormatException, Exception{
+		String result = "workOrder/form_tester";
+		searchTask(taskId, model);
+    	return result;
+	}
+	/**
+	 * 测试审核
+	 * @param taskId
+	 * @param model
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws Exception
+	 */
+	@RequestMapping(value= {"/testerAudit"})
+	public String testerAudit(@ModelAttribute("taskId") String taskId,Model model) throws NumberFormatException, Exception{
+		String result = "workOrder/form_tester_audit";
+		searchTask(taskId, model);
+    	return result;
+	}
+	/**
+	 * 运维部署
+	 * @param taskId
+	 * @param model
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws Exception
+	 */
+	@RequestMapping(value= {"/webmaster"})
+	public String webmaster(@ModelAttribute("taskId") String taskId,Model model) throws NumberFormatException, Exception{
+		String result = "workOrder/form_webmaster";
+		searchTask(taskId, model);
+    	return result;
+	}
+	/**
+	 * 运维部门审核
+	 * @param taskId
+	 * @param model
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws Exception
+	 */
+	@RequestMapping(value= {"/webmasterAudit"})
+	public String webmasterAudit(@ModelAttribute("taskId") String taskId,Model model) throws NumberFormatException, Exception{
+		String result = "workOrder/form_webmaster_audit";
+		searchTask(taskId, model);
+    	return result;
+	}
+	
+	@RequestMapping(value= {"/workOrderVerify"})
+	public String workOrderVerify(@ModelAttribute("taskId") String taskId,Model model) throws NumberFormatException, Exception{
+		String result = "workOrder/form_verify";
+		searchTask(taskId, model);
+    	return result;
+	}
+	
+	private void searchTask(String taskId, Model model) throws Exception {
 		Task task = this.taskService.createTaskQuery().taskId(taskId).singleResult();
 		// 根据任务查询流程实例
     	String processInstanceId = task.getProcessInstanceId();
 		ProcessInstance pi = this.runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
 		WorkOrder workOrder = (WorkOrder) this.runtimeService.getVariable(pi.getId(), "entity");
-		//vacation.setTask(task);
-		//vacation.setProcessInstanceId(processInstanceId);
 		List<CommentVO> commentList = this.processService.getComments(processInstanceId);
-		
 		//获取当前任务节点 Form KEY
 		TaskFormData formData = formService.getTaskFormData(taskId);
 		List<Project> projectList = projectService.findByOnline();
 		String formKey = formData.getFormKey();
-		String result = "workOrder/edit_workOrder";
 		model.addAttribute("formKey", formKey);
 		model.addAttribute("workOrder", workOrder);
 		model.addAttribute("commentList", commentList);
 		model.addAttribute("projectList",projectList);
-    	return result;
-	}	
-	
+	}
 	
 	/**
 	 * 调整请假申请

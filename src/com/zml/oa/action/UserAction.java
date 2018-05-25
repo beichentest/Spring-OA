@@ -110,6 +110,7 @@ public class UserAction {
 			map.put("registerDate", user.getRegisterDate());
 			map.put("locked", user.getLocked());
 			map.put("group_name", user.getGroup().getName());
+			map.put("realName", user.getRealName());
 			jsonList.add(map);
 		}
 		return new Datagrid<Object>(p.getTotal(), jsonList);

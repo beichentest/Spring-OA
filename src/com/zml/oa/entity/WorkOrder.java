@@ -75,6 +75,8 @@ public class WorkOrder extends BaseVO implements Serializable{
 	 */
 	@Column(name = "CODER_ID")
 	private Integer coderId;
+	
+	
 	/**
 	 * 开发部门审核人ID
 	 */
@@ -203,6 +205,37 @@ public class WorkOrder extends BaseVO implements Serializable{
 	 */
 	@Column(name = "WEB_MASTER")
 	private String webMaster;
+	/**
+	 * 开发提交时间
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Column(name = "CODER_DATE")
+	private Date coderDate;
+	/**
+	 * 测试提交时间
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Column(name = "TESTER_DATE")
+	private Date testerDate;
+	/**
+	 * 运维部门审核人
+	 */
+	@Column(name = "WEB_MASTER_AUDIT")
+	private String webMasterAudit;
+	/**
+	 * 运维部门审核人ID
+	 */
+	@Column(name = "WEB_MASTER_AUDIT_ID")
+	private Integer webMasterAuditId;
+	/**
+	 * 运维部门审核时间
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Column(name = "WEB_MASTER_AUDIT_DATE")
+	private Date webMasterAuditDate;	
 	
 	public WorkOrder(){
 		
@@ -455,5 +488,45 @@ public class WorkOrder extends BaseVO implements Serializable{
 
 	public void setWebMaster(String webMaster) {
 		this.webMaster = webMaster;
+	}
+
+	public Date getCoderDate() {
+		return coderDate;
+	}
+
+	public void setCoderDate(Date coderDate) {
+		this.coderDate = coderDate;
+	}
+
+	public Date getTesterDate() {
+		return testerDate;
+	}
+
+	public void setTesterDate(Date testerDate) {
+		this.testerDate = testerDate;
+	}
+
+	public String getWebMasterAudit() {
+		return webMasterAudit;
+	}
+
+	public void setWebMasterAudit(String webMasterAudit) {
+		this.webMasterAudit = webMasterAudit;
+	}
+
+	public Integer getWebMasterAuditId() {
+		return webMasterAuditId;
+	}
+
+	public void setWebMasterAuditId(Integer webMasterAuditId) {
+		this.webMasterAuditId = webMasterAuditId;
+	}
+
+	public Date getWebMasterAuditDate() {
+		return webMasterAuditDate;
+	}
+
+	public void setWebMasterAuditDate(Date webMasterAuditDate) {
+		this.webMasterAuditDate = webMasterAuditDate;
 	}
 }

@@ -81,6 +81,9 @@ public class User implements Serializable{
 	
 	@Column(name = "REAL_NAME")
 	private String realName;
+	
+	@Column(name = "EMAIL")
+	private String email;
     
 	public User(){
 		
@@ -165,5 +168,13 @@ public class User implements Serializable{
 
 	public void setRealName(String realName) {
 		this.realName = realName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

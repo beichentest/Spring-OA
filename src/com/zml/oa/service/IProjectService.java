@@ -9,4 +9,6 @@ import com.zml.oa.pagination.Page;
 
 public interface IProjectService {
 	public List<Project> findByOnline()throws Exception; 
+	
+	public Project getProjectById(Integer id)throws Exception;
 }

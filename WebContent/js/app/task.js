@@ -261,6 +261,31 @@ function handleTask(){
     		$.messager.alert("提示", "此任务您还没有签收，请【签收】任务后再处理任务！");
     	}else{
     		var _url;
+    		var button = [
+			          {
+			        	  text: '通过',
+			        	  iconCls: 'icon-ok',
+			        	  handler: function () {
+			        		  $("#completeFlag").val("true");
+			        		  audit_form.submit();
+			        	  }
+			          },
+			          {
+			        	  text: '驳回',
+			        	  iconCls: 'icon-remove',
+			        	  handler: function () {
+			        		  $("#completeFlag").val("false");
+			        		  audit_form.submit();
+			        	  }
+			          },
+			          {
+			        	  text: '关闭',
+			        	  iconCls: 'icon-cancel',
+			        	  handler: function () {
+			        		  audit_dialog.dialog('destroy');
+			        	  }
+			          }
+		          ];
     		if("vacation" == row.businessType){
     			_url = ctx + "/vacationAction/toApproval/"+row.taskId;
     		}else if("salary" == row.businessType){
@@ -269,6 +294,104 @@ function handleTask(){
     			_url = ctx + "/expenseAction/toApproval/"+row.taskId;
     		}else if("workorder" == row.businessType){
     			_url = ctx + "/workOrderAction/transferAction/"+row.taskId;
+    			if(row.taskDefinitionKey=="coder"||row.taskDefinitionKey=="tester"||row.taskDefinitionKey=="coderUpdate"||row.taskDefinitionKey=="testerUpdate"){
+    				button = [
+	  			          {
+				        	  text: '通过',
+				        	  iconCls: 'icon-ok',
+				        	  handler: function () {
+				        		  $("#reApply").val("true");
+				        		  audit_form.submit();
+				        	  }
+				          },        			         
+				          {
+				        	  text: '关闭',
+				        	  iconCls: 'icon-cancel',
+				        	  handler: function () {
+				        		  audit_dialog.dialog('destroy');
+				        	  }
+				          }
+			          ];
+    			}else if(row.taskDefinitionKey=="businessUpdate"){
+        				button = [
+            			          {
+            			        	  text: '重新申请',
+            			        	  iconCls: 'icon-ok',
+            			        	  handler: function () {
+            			        		  $("#reApply").val("true");
+            			        		  audit_form.submit();
+            			        	  }
+            			          },        			         
+            			          {
+            			        	  text: '关闭',
+            			        	  iconCls: 'icon-cancel',
+            			        	  handler: function () {
+            			        		  audit_dialog.dialog('destroy');
+            			        	  }
+            			          }
+            			]
+        		}else if(row.taskDefinitionKey=="webmaster"){
+    				button = [
+  			          {
+  			        	  text: '通过上线',
+  			        	  iconCls: 'icon-ok',
+  			        	  handler: function () {
+  			        		$("#completeFlag").val("false");
+  			        		  audit_form.submit();
+  			        	  }
+  			          },{
+			        	  text: '回滚',
+			        	  iconCls: 'icon-remove',
+			        	  handler: function () {
+			        		  $("#completeFlag").val("true");
+			        		  audit_form.submit();
+			        	  }
+			          },        			         
+  			          {
+  			        	  text: '关闭',
+  			        	  iconCls: 'icon-cancel',
+  			        	  handler: function () {
+  			        		  audit_dialog.dialog('destroy');
+  			        	  }
+  			          }
+		  			]
+				}else if(row.taskDefinitionKey=="webmasterAudit"){
+    				button = [
+    			          {
+    			        	  text: '通过',
+    			        	  iconCls: 'icon-ok',
+    			        	  handler: function () {
+    			        		  $("#reApply").val("true");
+    			        		  audit_form.submit();
+    			        	  }
+    			          },        			         
+    			          {
+    			        	  text: '关闭',
+    			        	  iconCls: 'icon-cancel',
+    			        	  handler: function () {
+    			        		  audit_dialog.dialog('destroy');
+    			        	  }
+    			          }
+  		  			]
+  				}else if(row.taskDefinitionKey=="applyConfirm"){
+    				button = [
+  			          {
+  			        	  text: '确认',
+  			        	  iconCls: 'icon-ok',
+  			        	  handler: function () {
+  			        		  $("#reApply").val("true");
+  			        		  audit_form.submit();
+  			        	  }
+  			          },        			         
+  			          {
+  			        	  text: '关闭',
+  			        	  iconCls: 'icon-cancel',
+  			        	  handler: function () {
+  			        		  audit_dialog.dialog('destroy');
+  			        	  }
+  			          }
+		  			]
+				}
     		}
     		
     		//弹出对话窗口
@@ -288,31 +411,7 @@ function handleTask(){
     					$("#type").combobox('select', type);
     				}
     			},
-    			buttons: [
-    			          {
-    			        	  text: '通过',
-    			        	  iconCls: 'icon-ok',
-    			        	  handler: function () {
-    			        		  $("#completeFlag").val("true");
-    			        		  audit_form.submit();
-    			        	  }
-    			          },
-    			          {
-    			        	  text: '驳回',
-    			        	  iconCls: 'icon-remove',
-    			        	  handler: function () {
-    			        		  $("#completeFlag").val("false");
-    			        		  audit_form.submit();
-    			        	  }
-    			          },
-    			          {
-    			        	  text: '关闭',
-    			        	  iconCls: 'icon-cancel',
-    			        	  handler: function () {
-    			        		  audit_dialog.dialog('destroy');
-    			        	  }
-    			          }
-    			],
+    			buttons: button,
 	            onClose: function () {
 	        	    audit_dialog.dialog('destroy');
 	            }
@@ -337,26 +436,6 @@ function handleTask(){
         			        		  audit_form.submit();
         			        	  }
         			          },
-        			          {
-        			        	  text: '关闭',
-        			        	  iconCls: 'icon-cancel',
-        			        	  handler: function () {
-        			        		  audit_dialog.dialog('destroy');
-        			        	  }
-        			          }
-        			]
-    			})
-    		}else if(row.taskDefinitionKey=="businessUpdate"){
-    			audit_dialog.dialog({
-    				buttons: [
-        			          {
-        			        	  text: '重新申请',
-        			        	  iconCls: 'icon-ok',
-        			        	  handler: function () {
-        			        		  $("#reApply").val("true");
-        			        		  audit_form.submit();
-        			        	  }
-        			          },        			         
         			          {
         			        	  text: '关闭',
         			        	  iconCls: 'icon-cancel',

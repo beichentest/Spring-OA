@@ -1,9 +1,18 @@
 package com.zml.oa.action;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiObjectNotFoundException;
@@ -14,7 +23,7 @@ import org.activiti.engine.TaskService;
 import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
-import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +37,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.deepoove.poi.XWPFTemplate;
 import com.zml.oa.entity.BaseVO;
 import com.zml.oa.entity.CommentVO;
-import com.zml.oa.entity.Group;
+import com.zml.oa.entity.Datagrid;
 import com.zml.oa.entity.Message;
 import com.zml.oa.entity.Project;
 import com.zml.oa.entity.User;
 import com.zml.oa.entity.Vacation;
 import com.zml.oa.entity.WorkOrder;
-import com.zml.oa.pagination.Pagination;
-import com.zml.oa.pagination.PaginationThreadUtils;
+import com.zml.oa.pagination.Page;
 import com.zml.oa.service.IProcessService;
 import com.zml.oa.service.IProjectService;
 import com.zml.oa.service.IVacationService;
@@ -56,7 +65,12 @@ import com.zml.oa.util.UserUtil;
 
 @Controller
 @RequestMapping("/workOrderAction")
-public class WorkOrderAction {
+public class WorkOrderAction implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2541344788225943147L;
+
 	private static final Logger logger = Logger.getLogger(WorkOrderAction.class);
 	
 	@Autowired
@@ -84,29 +98,41 @@ public class WorkOrderAction {
 	private IProjectService projectService;
 	
 	/**
-	 * 查询某人的所有请假申请
+	 * 
 	 * @param model
 	 * @return
 	 * @throws Exception
 	 */
-	@RequiresPermissions("user:vacation:list")
-	@RequestMapping("/toList_page")
-	public String toList(Model model) throws Exception{
-		User user = UserUtil.getUserFromSession();
-		List<Vacation> list = this.vacationService.toList(user.getId());
-//		for(Vacation v : list){
-//			if(BaseVO.APPROVAL_SUCCESS.equals(v.getStatus())){
-//				Vacation vacation = (Vacation)this.historyService.createHistoricVariableInstanceQuery()
-//					.processInstanceId(v.getProcessInstanceId()).variableName("entity");
-//				
-//			}
-//		}
-		Pagination pagination = PaginationThreadUtils.get();
-		model.addAttribute("page", pagination.getPageStr());
-		model.addAttribute("vacationList", list);
-		return "vacation/list_vacation";
+	@RequestMapping("/toList")
+	@ResponseBody
+	public Datagrid<WorkOrder> toList(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "rows", required = false) Integer rows,String sort,String order,String id,String applyUser) throws Exception{
+		Page<WorkOrder> p = new Page<WorkOrder>(page, rows);
+		if(StringUtils.isBlank(sort)) {
+			sort = "applyDate";
+			order = "desc";
+		}
+		List<String> columns = new ArrayList<String>();
+		List<String> values = new ArrayList<String>();
+		
+		columns.add("status");
+		values.add(BaseVO.APPROVAL_SUCCESS);
+		if(StringUtils.isNotBlank(id)) {
+			columns.add("id");
+			values.add(id);			
+		}
+		if(StringUtils.isNotBlank(applyUser)) {			
+			columns.add("applyUser");
+			values.add(applyUser);
+		}
+		
+		List<WorkOrder> workOrderList = this.workOrderService.getWorkOrderList(p,columns.toArray(new String[columns.size()]),values.toArray(new String[values.size()]),sort,order);
+		return new Datagrid<WorkOrder>(p.getTotal(), workOrderList);
 	}
 	
+	@RequestMapping(value = "/workOrderDatagrid")
+	public String toList_page() throws Exception{
+		return "workOrder/list_workOrder";
+	}
 	
 	/**
 	 * 以下是EasyUI的页面需求
@@ -256,6 +282,7 @@ public class WorkOrderAction {
     		//WorkOrder workOrder = this.workOrderService.findById(workOrderId);    		
     		WorkOrder baseWorkOrder = (WorkOrder) this.runtimeService.getVariable(processInstanceId, "entity");
     		Map<String, Object> variables = new HashMap<String, Object>();
+    		baseWorkOrder.setProcInstId(processInstanceId);
     		String taskDefKey = task.getTaskDefinitionKey();
     		if("businessAudit".equals(taskDefKey)) {  //申请人部门审核
 	    		variables.put("isPass", completeFlag);
@@ -264,7 +291,7 @@ public class WorkOrderAction {
 	    		baseWorkOrder.setBusinessAuditDate(new Date());
 	    		if(!completeFlag){
 	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请失败,需修改后重新提交！");
-	    			baseWorkOrder.setStatus(BaseVO.APPROVAL_FAILED);    			
+	    			//baseWorkOrder.setStatus(BaseVO.APPROVAL_FAILED);    			
 	    		}else {
 	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请！");
 	    		}
@@ -300,10 +327,10 @@ public class WorkOrderAction {
     			baseWorkOrder.setCoderAuditId(user.getId());
     			if(!completeFlag){
 	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请开发审核失败,需修改后重新提交！");
-	    			baseWorkOrder.setStatus(BaseVO.APPROVAL_FAILED);    			
+	    			//baseWorkOrder.setStatus(BaseVO.APPROVAL_FAILED);    			
 	    		}else {
 	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请！");
-	    			baseWorkOrder.setStatus(BaseVO.PENDING);
+	    			//baseWorkOrder.setStatus(BaseVO.PENDING);
 	    		}
     		}else if("tester".equals(taskDefKey)||"testerUpdate".equals(taskDefKey)) { //测试
     			variables.put("testerId", user.getId().toString());
@@ -319,10 +346,10 @@ public class WorkOrderAction {
     			baseWorkOrder.setTestAuditDate(new Date());    			    			
     			if(!completeFlag){
 	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请开发审核失败,需修改后重新提交！");
-	    			baseWorkOrder.setStatus(BaseVO.APPROVAL_FAILED);    			
+	    			//baseWorkOrder.setStatus(BaseVO.APPROVAL_FAILED);    			
 	    		}else {
 	    			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请！");
-	    			baseWorkOrder.setStatus(BaseVO.PENDING);
+	    			//baseWorkOrder.setStatus(BaseVO.PENDING);
 	    		}
     		}else if("webmaster".equals(taskDefKey)) { //运维    			
     			variables.put("rollback", completeFlag);
@@ -573,4 +600,59 @@ public class WorkOrderAction {
 		return "/vacation/details_vacation";
 	}
 	
+	@SuppressWarnings("serial")
+	@RequestMapping(value="/downloadWord")
+	public void downloadWord(HttpServletRequest request,HttpServletResponse response,Integer id) throws Exception {
+		WorkOrder workOrder = workOrderService.findById(id);
+        // 获取应用的根路径
+        String servletContextRealPath = request.getServletContext().getRealPath("");
+        // 获取模板文件
+        File templateFile = new File(servletContextRealPath + "/template/template.docx");
+       
+        // 替换读取到的 word 模板内容的指定字段
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("PROJECT_NAME",workOrder.getProject().getName());
+        params.put("NO",workOrder.getId().toString());
+        params.put("DOMAIN",workOrder.getDomain());
+        params.put("DEVELOP_EXPLAIN",workOrder.getDevelopExplain());
+        params.put("APPLY_USER",workOrder.getApplyUser());
+        params.put("APPLY_DATE",DateUtil.DateToString(workOrder.getApplyDate(),"yyyy-MM-dd"));
+        params.put("B_AUDIT",workOrder.getBusinessAuditUser());
+        params.put("B_DATE",DateUtil.DateToString(workOrder.getBusinessAuditDate(),"yyyy-MM-dd"));
+        params.put("CODER_VERSION",workOrder.getCoderVersion());
+        params.put("CODER_SVN",workOrder.getCoderSvn());
+        params.put("CODER",workOrder.getCoder());
+        params.put("CODER_DATE",DateUtil.DateToString(workOrder.getCoderDate(),"yyyy-MM-dd"));
+        params.put("C_AUDIT",workOrder.getCoderAudit());
+        params.put("C_DATE",DateUtil.DateToString(workOrder.getCoderAuditDate(),"yyyy-MM-dd"));
+        params.put("TEST_SVN",workOrder.getTestSvn());
+        params.put("TEST_VERSION",workOrder.getTestVersion());
+        params.put("TESTER",workOrder.getTester());
+        params.put("TESTER_DATE",DateUtil.DateToString(workOrder.getTesterDate(),"yyyy-MM-dd"));
+        params.put("T_AUDIT",workOrder.getTesterAudit());
+        params.put("T_DATE",DateUtil.DateToString(workOrder.getTestAuditDate(),"yyyy-MM-dd"));
+        params.put("WEB",workOrder.getWebMaster());
+        params.put("WEB_DATE",DateUtil.DateToString(workOrder.getDeployDate(),"yyyy-MM-dd"));
+        params.put("W_AUDIT",workOrder.getWebMasterAudit());
+        params.put("W_DATE",DateUtil.DateToString(workOrder.getWebMasterAuditDate(),"yyyy-MM-dd"));
+        params.put("VERIFY_DATE",DateUtil.DateToString(workOrder.getVerifyDate(),"yyyy-MM-dd"));          
+        
+        XWPFTemplate template = XWPFTemplate.compile(templateFile)
+				.render(params);
+        // 输出 word 内容文件流，提供下载
+        response.reset();
+        response.setContentType("application/x-msdownload");
+        // 随机生成一个文件名
+        UUID randomUUID = UUID.randomUUID();
+        String attachmentName = randomUUID.toString();
+        response.addHeader("Content-Disposition", "attachment; filename=\""+ attachmentName + ".doc\"");
+        ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+        ServletOutputStream servletOS = response.getOutputStream();
+        template.write(ostream);
+        servletOS.write(ostream.toByteArray());
+        servletOS.flush();
+        servletOS.close();
+        ostream.close();
+        template.close();
+	}
 }

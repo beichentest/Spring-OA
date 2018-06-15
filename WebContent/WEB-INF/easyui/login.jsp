@@ -81,7 +81,7 @@
 						<input class="userName" type="text" name="name" id="name" value="admin" title="用户名" nullmsg="请输入用户名!" iscookie="true" />
 					</div>
 					<div class="tip">
-						<input class="password" name="passwd" type="password" id="passwd" value="123" title="密码" nullmsg="请输入密码!" />
+						<input class="password" name="passwd" type="password" id="passwd" value="123456" title="密码" nullmsg="请输入密码!" />
 					</div>
 					<div id="cap" class="tip">
 						<c:if test="${jcaptchaEbabled}">

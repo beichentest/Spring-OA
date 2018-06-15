@@ -220,6 +220,48 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 	public T loadBean(Class<T> obj, Serializable id) throws Exception {
 		return this.baseDao.loadBean(obj, id);
 	}
+
+	@Override
+	public List<T> getListPage(String tableSimpleName, String[] columns, String[] values, Page<T> page, String sort,
+			String order) throws Exception {
+		Integer totalSum = 0;
+		List<T> list = new ArrayList<T>();
+		if(columns.length <= 0 && values.length <= 0){
+			list = getAllList(tableSimpleName);
+		}else{
+			list = findByWhere(tableSimpleName, columns, values);
+		}
+		if(!BeanUtils.isBlank(list)){
+			totalSum = list.size();
+		}
+		int[] pageParams = page.getPageParams(totalSum);
+		
+		StringBuffer sb = new StringBuffer();  
+        sb.append("select a from ").append(tableSimpleName).append( " a where ");  
+        if(columns.length==values.length){  
+            for(int i = 0; i < columns.length; i++){  
+                sb.append("a.").append(columns[i]).append("='").append(values[i]).append("'");  
+                if(i < columns.length-1){  
+                    sb.append(" and ");  
+                }  
+            } 
+	        String hql = sb.toString();
+	        if(hql.endsWith("where ")){
+	    	    hql = hql.substring(0, hql.length()-6);
+	        }
+	        logger.info("findByPage: HQL: "+hql);
+	        list = this.baseDao.findByPage(hql, pageParams[0], pageParams[1],sort,order); 
+	        if( list.size()>0 ){
+	        	page.setResult(list);
+        	    return list;
+            }else{
+        	    return Collections.emptyList();
+            }
+        }else{
+        	logger.info("findByPage: columns.length != values.length");
+        	return Collections.emptyList();
+        }
+	}
 	
 	
 }

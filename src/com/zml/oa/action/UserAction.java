@@ -159,6 +159,29 @@ public class UserAction {
 		
 	}
 	
+	@RequestMapping(value = "/showUser")
+	public String showUser(Model model) throws Exception{
+		User user = UserUtil.getUserFromSession();
+		model.addAttribute("user", user);
+		return "user/show_user";
+	}
+	@RequestMapping(value = "/doUpdateUser")
+	@ResponseBody
+	public Message doUpdateUser(HttpServletRequest request) throws Exception{
+		Message message = new Message();
+		User user = UserUtil.getUserFromSession();
+		String passwd = request.getParameter("passwd");
+		user.setPasswd(passwd);
+		this.userService.doUpdate(user);
+		Subject currentUser = SecurityUtils.getSubject();
+		UserRealm ur = new UserRealm();
+		ur.clearCachedAuthenticationInfo(currentUser.getPrincipals());
+		
+		message.setStatus(Boolean.TRUE);
+		message.setMessage("修改成功！");
+		return message;
+	}
+	
 	@RequiresPermissions("admin:user:toUpdate")
 	@RequestMapping(value = "/toUpdate/{id}")
 	public String toUpdate(@PathVariable("id") Integer id,Model model) throws Exception{
@@ -180,6 +203,7 @@ public class UserAction {
 		String passwd = request.getParameter("passwd");
 		String groupId = request.getParameter("group.id");
 		String locked = request.getParameter("locked");
+		String realName = request.getParameter("realName");
 		Message message = new Message();
 		User user = new User();
 		if(StringUtils.isNotEmpty(id)){
@@ -188,14 +212,15 @@ public class UserAction {
 			user.setSalt(salt);
 			user.setPasswd(passwd);
 			user.setLocked(new Integer(locked));
+			user.setRealName(realName);
 			if(StringUtils.isNotEmpty(groupId)){
 				user.setGroup(new Group(new Integer(groupId)));
 			}else{
 				message.setStatus(Boolean.FALSE);
 				message.setMessage("group.id 为空！");
 			}
-			Date date = DateUtil.StringToDate(registerDate, "yyyy-MM-dd HH:mm");
-			user.setRegisterDate(date);
+			//Date date = DateUtil.StringToDate(registerDate, "yyyy-MM-dd HH:mm");
+			//user.setRegisterDate(date);
 		}else{
 			message.setStatus(Boolean.FALSE);
 			message.setMessage("userId 为空！");

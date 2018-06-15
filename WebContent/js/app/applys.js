@@ -10,7 +10,7 @@ var vacation_form;
 
 $(function() {
 	//初始化vacation页面
-	showApply("vacation");
+	showApply("workorder");
 	
 	$('#tabs').tabs({
 	    border:false,

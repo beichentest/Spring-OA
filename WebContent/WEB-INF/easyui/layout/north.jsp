@@ -12,21 +12,71 @@
 		
 	}
 
-	var userInfoWindow;
+	var user_dialog;
+	var user_form;
 	function showUserInfo() {
-		userInfoWindow = $('<div/>').window({
+		user_dialog = $('<div/>').dialog({
 			modal : true,
 			title : '当前用户信息',
 			width : 350,
-			height : 300,
+			height : 250,
 			collapsible : false,
 			minimizable : false,
 			maximizable : false,
-			//href : 'userAction!showUserInfo.action',
+			href : '${ctx}/userAction/showUser',
+			onLoad: function () {
+	            formInit();	           
+	        },
+			buttons: [
+	            {
+	                text: '保存',
+	                iconCls: 'icon-save',
+	                handler: function () {
+	                    user_form.submit();
+	                }
+	            },
+	            {
+	                text: '关闭',
+	                iconCls: 'icon-cancel',
+	                handler: function () {
+	                    user_dialog.dialog('destroy');
+	                }
+	            }
+	        ],
 			onClose : function() {
-				$(this).window('destroy');
+				user_dialog.dialog('destroy');
 			}
 		});
+	}
+	function formInit() {
+	    var _url = ctx+"/userAction/doUpdateUser";		
+	    user_form = $('#user_form').form({
+	        url: _url,
+	        onSubmit: function (param) {
+	            $.messager.progress({
+	                title: '提示信息！',
+	                text: '数据处理中，请稍后....'
+	            });
+	            var isValid = $(this).form('validate');
+	            if (!isValid) {
+	                $.messager.progress('close');
+	            }
+	            return isValid;
+	        },
+	        success: function (data) {
+	            $.messager.progress('close');
+	            var json = $.parseJSON(data);
+	            if (json.status) {
+	                user_dialog.dialog('destroy');//销毁对话框
+	                user_datagrid.datagrid('reload');//重新加载列表数据
+	            } 
+	            $.messager.show({
+					title : json.title,
+					msg : json.message,
+					timeout : 1000 * 2
+				});
+	        }
+	    });
 	}
 </script>
 <div style="position: absolute; right: 0px; bottom: 0px; ">

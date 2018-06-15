@@ -18,4 +18,8 @@ public interface IWorkOrderService {
 	public WorkOrder findById(Integer id) throws Exception;
 	
 	public List<WorkOrder> findByStatus(Integer userId, String status, Page<WorkOrder> page) throws Exception; 
+	
+	public List<WorkOrder> getWorkOrderList(Page<WorkOrder> page) throws Exception;
+	
+	public List<WorkOrder> getWorkOrderList(Page<WorkOrder> page,String[] columns, String[] values,String sort,String order) throws Exception;
 }

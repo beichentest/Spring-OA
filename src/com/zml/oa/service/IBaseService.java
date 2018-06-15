@@ -42,6 +42,8 @@ public interface IBaseService<T> {
 	 public List<T> findByPage(String tableSimpleName,String[] columns,String[] values) throws Exception;
 	 
 	 public List<T> getListPage(String tableSimpleName,String[] columns,String[] values, Page<T> page) throws Exception;
+	 
+	 public List<T> getListPage(String tableSimpleName,String[] columns,String[] values, Page<T> page,String sort,String order) throws Exception;
 	
 	 public T loadBean(final Class<T> obj,final Serializable id) throws Exception;
 }

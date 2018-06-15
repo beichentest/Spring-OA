@@ -138,7 +138,7 @@ public class ProcessServiceImp implements IProcessService{
 		TaskQuery taskQuery = this.taskService.createTaskQuery().taskCandidateOrAssigned(user.getId().toString());
 		Integer totalSum = taskQuery.list().size();
 		int[] pageParams = page.getPageParams(totalSum);
-		List<Task> tasks = taskQuery.orderByTaskCreateTime().desc().listPage(pageParams[0], pageParams[1]);
+		List<Task> tasks = taskQuery.orderByTaskCreateTime().asc().listPage(pageParams[0], pageParams[1]);
 		List<BaseVO> taskList = getBaseVOList(tasks);
 		return taskList;
     } 

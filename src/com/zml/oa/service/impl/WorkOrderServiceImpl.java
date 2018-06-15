@@ -48,4 +48,14 @@ public class WorkOrderServiceImpl implements IWorkOrderService {
 		return list;
 	}
 
+	@Override
+	public List<WorkOrder> getWorkOrderList(Page<WorkOrder> page) throws Exception {		
+		return this.baseService.getListPage("WorkOrder", new String[]{}, new String[]{}, page);		
+	}
+
+	@Override
+	public List<WorkOrder> getWorkOrderList(Page<WorkOrder> page,String[] columns, String[] values, String sort, String order) throws Exception {
+		return this.baseService.getListPage("WorkOrder", columns, values, page, sort, order);
+	}
+
 }

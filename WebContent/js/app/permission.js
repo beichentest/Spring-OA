@@ -36,7 +36,7 @@ $(function() {
 		        {field : 'leader.name',title : '组长',width : fixWidth(0.1),sortable: true,align : 'center',editor : "text",
 		        	formatter:function(val, row, index){  
 		        	    if(row.leader){  
-		        	      return row.leader.name;  
+		        	      return row.leader.realName;  
 		        	    }  
 		        	  }
 		        },
@@ -233,7 +233,7 @@ function showGroup(row) {
     	title : "组信息",
 		top: 20,
 		width : 500,
-		height : 200,
+		height : 250,
         modal: true,
         minimizable: true,
         maximizable: true,
@@ -243,7 +243,7 @@ function showGroup(row) {
             if (row) {
             	group_form.form('load', row);
             	group_form.form('load', {
-            		'leader.name':row.leader.name,
+            		'leader.name':row.leader.realName,
             		'leader.id':row.leader.id
             	});
             }

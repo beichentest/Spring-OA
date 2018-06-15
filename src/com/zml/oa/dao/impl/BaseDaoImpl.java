@@ -3,6 +3,7 @@ package com.zml.oa.dao.impl;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -86,6 +87,18 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
 	@Override
 	public Long count(String hql) {
 		return (Long) this.getSession().createQuery(hql).uniqueResult();
+	}
+
+	@Override
+	public List<T> findByPage(String hql, int firstResult, int maxResult, String sort, String order) throws Exception {
+		Session session=sessionFactory.getCurrentSession();
+		if(StringUtils.isNotBlank(sort)&&StringUtils.isNotBlank(order)) {
+			hql = hql+" order by "+sort+" "+order;
+		}
+		Query query = session.createQuery(hql);
+		query.setFirstResult(firstResult);
+		query.setMaxResults(maxResult);
+		return query.list();
 	}
 
 }

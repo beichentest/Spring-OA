@@ -116,9 +116,9 @@
 	<!--Login div-->
 	<div class="clear"></div>
 	<div id="versionBar">
-		<div class="copyright">&copy; 版权所有 <span class="tip"><a href="javascript:void(0);" title="SpringOA">SpringOA</a>
+		<!-- <div class="copyright">&copy; 版权所有 <span class="tip"><a href="javascript:void(0);" title="SpringOA">SpringOA</a>
 				- 技术支持:<a href="javascript:void(0);" title="zhaoml529@163.com">zml</a> </span>
-		</div>
+		</div> -->
 	</div>
 	<script>
 	    $(function() {

@@ -11,4 +11,8 @@ public interface IProjectService {
 	public List<Project> findByOnline()throws Exception; 
 	
 	public Project getProjectById(Integer id)throws Exception;
+
+	public List<Project> getProjectList(Page<Project> page,String[] columns, String[] values, String sort, String order) throws Exception;
+
+	public void doAdd(Project project)throws Exception;
 }

@@ -21,13 +21,29 @@ $(function() {
         columns : [ 
             [ 
               {field : 'name',title : '名称',width : fixWidth(0.2),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-              {field : 'language',title : '语言',width : fixWidth(0.08),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-              {field : 'coder',title : '开发人员',width : fixWidth(0.05),align : 'left',editor : {type:'validatebox',options:{required:true}}},
-              {field : 'server',title : '服务器',width : fixWidth(0.08),align : 'left',editor : {type:'validatebox',options:{required:true}}},
-              {field : 'os',title : '操作系统',width : fixWidth(0.05),align : 'left',editor : {type:'validatebox',options:{required:true}}},
-              {field : 'db',title : '数据库',width : fixWidth(0.05),align : 'left',editor : {type:'validatebox',options:{required:true}}},
-              {field : 'releaseTime',title : '发布时间',width : fixWidth(0.1),editor : "datebox",sortable: true,},
-              {field : 'discardTime',title : '下线时间',width : fixWidth(0.1),editor : "datebox",sortable: true,},
+              {field : 'language',title : '语言',width : fixWidth(0.1),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
+              {field : 'coder',title : '开发人员',width : fixWidth(0.08),align : 'left',editor : {type:'validatebox',options:{required:true}}},
+              {field : 'server',title : '服务器',width : fixWidth(0.1),align : 'left',editor : {type:'validatebox',options:{required:true}}},
+              {field : 'os',title : '操作系统',width : fixWidth(0.08),align : 'left',editor : {type:'validatebox',options:{required:true}}},
+              {field : 'db',title : '数据库',width : fixWidth(0.1),align : 'left',editor : {type:'validatebox',options:{required:true}}},
+              {field : 'releaseTime',title : '发布时间',width : fixWidth(0.1),editor : "datebox",sortable: true,
+            	  formatter : function(value){
+                      var date = new Date(value);
+                      var y = date.getFullYear();
+                      var m = date.getMonth() + 1;
+                      var d = date.getDate();
+                      return y + '-' +m + '-' + d;
+                  }
+              }/*,
+              {field : 'discardTime',title : '下线时间',width : fixWidth(0.1),editor : "datebox",sortable: true,
+            	  formatter : function(value){
+                      var date = new Date(value);
+                      var y = date.getFullYear();
+                      var m = date.getMonth() + 1;
+                      var d = date.getDate();
+                      return y + '-' +m + '-' + d;
+                  }  
+              },
               {field : 'status',title : '状态',width : fixWidth(0.05),sortable: true,
             	  formatter:function(value,row){
 	        		  if("0"==row.status){
@@ -36,7 +52,7 @@ $(function() {
 	          			return "<font color=red>下线<font>";  
 	          		  }
 				  },
-          	  editor : "text"}              
+          	  editor : "text"} */             
     	    ] 
         ],
         toolbar: "#toolbar"
@@ -133,8 +149,7 @@ function showUser(row) {
             {
                 text: '保存',
                 iconCls: 'icon-save',
-                handler: function () {
-                	alert(123);
+                handler: function () {                	
                     user_form.submit();
                 }
             },

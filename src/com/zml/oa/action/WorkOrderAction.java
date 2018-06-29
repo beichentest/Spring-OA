@@ -312,6 +312,8 @@ public class WorkOrderAction implements Serializable{
     			baseWorkOrder.setApplyDate(new Date());
     			baseWorkOrder.setStatus(BaseVO.PENDING);
     			baseWorkOrder.setTitle(baseWorkOrder.getUser_name()+" 的工单申请,修改后重新提交！");
+    			baseWorkOrder.setPriority(workOrder.getPriority());
+    			variables.put("priority", workOrder.getPriority());
     		}else if("coder".equals(taskDefKey)||"coderUpdate".equals(taskDefKey)) {    //开发人员录入 coderUpdate
     			variables.put("coderId", user.getId().toString());
     			baseWorkOrder.setDevelopExplain(workOrder.getDevelopExplain());
@@ -334,6 +336,7 @@ public class WorkOrderAction implements Serializable{
 	    		}
     		}else if("tester".equals(taskDefKey)||"testerUpdate".equals(taskDefKey)) { //测试
     			variables.put("testerId", user.getId().toString());
+    			variables.put("isPass", completeFlag);
     			baseWorkOrder.setTester(user.getRealName());
     			baseWorkOrder.setTesterId(user.getId());
     			baseWorkOrder.setTesterDate(new Date());

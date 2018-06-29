@@ -1,5 +1,6 @@
 package com.zml.oa.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,23 @@ public class ProjectServiceImpl extends BaseServiceImpl<Project>implements IProj
 	public List<Project> getProjectList(Page<Project> page,String[] columns, String[] values, String sort, String order) throws Exception {		
 		return getListPage("Project", columns, values, page, sort, order);		
 	}
-
+	@Override
+	public List<Project> getProjectList(String hql,Page<Project> page,Object[] values, String sort, String order) throws Exception {		
+		return this.getListPage(hql, page, sort, order, values);		
+	}
 	public void doAdd(Project project) throws Exception {
 		add(project);
+	}
+	@Override
+	public void doDelete(Integer id) throws Exception {
+		//Project project = baseService.loadBean(Project.class, id);
+		Project project = baseService.getBean(Project.class, id);
+		project.setDiscardTime(new Date());
+		project.setStatus("1");
+		baseService.update(project);
+	}
+	@Override
+	public void doUpdate(Project project)throws Exception{
+		baseService.update(project);
 	}
 }

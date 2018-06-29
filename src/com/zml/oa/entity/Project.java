@@ -1,10 +1,3 @@
-/**
- * Project Name:SpringOA
- * File Name:User.java
- * Package Name:com.zml.oa.entity
- * Date:2014-11-8下午11:12:48
- *
- */
 package com.zml.oa.entity;
 
 import java.io.Serializable;
@@ -12,34 +5,23 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Pattern;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 /**
- * @ClassName: User
- * @Description:TODO(这里用一句话描述这个类的作用)
- * @author: zml
- * @date: 2014-11-8 下午11:12:48
- *
+ * 
+* @ClassName: Project  
+* @Description: TODO(这里用一句话描述这个类的作用)  
+* @author Administrator  
+* @date 2018年6月28日  
+*
  */
-
 @Entity
 @Table(name = "T_PROJECT")
 @DynamicUpdate(true)
@@ -77,12 +59,17 @@ public class Project implements Serializable{
 	 * 是否有源码（0 无  ，1 有）
 	 */
 	@Column(name = "HAVE_CODE")
-	private String havetCode;
+	private String haveCode;
 	/**
 	 * 是否有发布版本（0 无  ，1 有）
 	 */
 	@Column(name = "HAVE_RELEASE")
-	private String have_release;
+	private String haveRelease;
+	/**
+	 * 是否有文档
+	 */
+	@Column(name = "HAVE_DOC")
+	private String haveDoc;
 	/**
 	 * 开发人员
 	 */
@@ -108,7 +95,7 @@ public class Project implements Serializable{
 	 */
 	@Column(name = "RELEASE_TIME")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date release_time;
+	private Date releaseTime;
 	/**
 	 * 状态（0 正常，1 下线）
 	 */
@@ -135,6 +122,16 @@ public class Project implements Serializable{
 	 */
 	@Column(name = "TESTER_SVN")
 	private String testerSvn;
+	/**
+	 * 归属
+	 */
+	@Column(name = "HOME")
+	private String home;
+	/**
+	 * 应用地区
+	 */
+	@Column(name = "AREA")
+	private String area;
 	public Integer getId() {
 		return id;
 	}
@@ -165,18 +162,13 @@ public class Project implements Serializable{
 	public void setHaveTest(String haveTest) {
 		this.haveTest = haveTest;
 	}
-	public String getHavetCode() {
-		return havetCode;
+	public String getHaveCode() {
+		return haveCode;
 	}
-	public void setHavetCode(String havetCode) {
-		this.havetCode = havetCode;
+	public void setHaveCode(String haveCode) {
+		this.haveCode = haveCode;
 	}
-	public String getHave_release() {
-		return have_release;
-	}
-	public void setHave_release(String have_release) {
-		this.have_release = have_release;
-	}
+	
 	public String getCoder() {
 		return coder;
 	}
@@ -201,12 +193,7 @@ public class Project implements Serializable{
 	public void setDb(String db) {
 		this.db = db;
 	}
-	public Date getRelease_time() {
-		return release_time;
-	}
-	public void setRelease_time(Date release_time) {
-		this.release_time = release_time;
-	}
+	
 	public String getStatus() {
 		return status;
 	}
@@ -236,5 +223,35 @@ public class Project implements Serializable{
 	}
 	public void setTesterSvn(String testerSvn) {
 		this.testerSvn = testerSvn;
+	}
+	public String getHaveRelease() {
+		return haveRelease;
+	}
+	public void setHaveRelease(String haveRelease) {
+		this.haveRelease = haveRelease;
+	}
+	public String getHaveDoc() {
+		return haveDoc;
+	}
+	public void setHaveDoc(String haveDoc) {
+		this.haveDoc = haveDoc;
+	}
+	public Date getReleaseTime() {
+		return releaseTime;
+	}
+	public void setReleaseTime(Date releaseTime) {
+		this.releaseTime = releaseTime;
+	}
+	public String getHome() {
+		return home;
+	}
+	public void setHome(String home) {
+		this.home = home;
+	}
+	public String getArea() {
+		return area;
+	}
+	public void setArea(String area) {
+		this.area = area;
 	}
 }

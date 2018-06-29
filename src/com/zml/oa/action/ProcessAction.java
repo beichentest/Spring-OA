@@ -223,7 +223,7 @@ public class ProcessAction {
 			map.put("processDefinitionKey", base.getProcessDefinition().getKey());	//任务跳转用
 			map.put("supended", base.getProcessInstance().isSuspended());
 			map.put("version", base.getProcessDefinition().getVersion());
-			
+			map.put("priority", base.getTask().getPriority());
 			jsonList.add(map);
 		}
 		return new Datagrid<Object>(p.getTotal(), jsonList);

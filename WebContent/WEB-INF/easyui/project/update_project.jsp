@@ -1,23 +1,6 @@
 ﻿<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-<script type="text/javascript">
-/* $(function(){
-	$("#group").combobox({
-		width:160,
-		url:ctx+"/groupAction/getAllGroup",
-		valueField: 'id',
-		textField: 'name',
-		onSelect:function(value){
-			$("#group_name").val(value.name);
-		},
-		required: true,
-		onLoadSuccess: function (data) {
-            $("#group").combobox('setValue',data[0].id);
-        }
-	});
-}) */
-</script>
 <style type="text/css">
     #fm{
         margin:0;
@@ -45,6 +28,8 @@
 <div id="dlg" class="easyui-layout" style="padding:10px 20px">
     <div class="ftitle"><img src="${ctx }/extend/fromedit.png" style="margin-bottom: -3px;"/> 项目信息</div>
     <form id="user_form" method="post" >
+    	<input type="hidden" name="id">
+    	<input type="hidden" name="status">
         <div class="fitem">
             <label>名称:</label>
             <input id="name" name="name" class="easyui-textbox easyui-validatebox" required="true">

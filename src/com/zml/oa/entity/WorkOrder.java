@@ -235,7 +235,17 @@ public class WorkOrder extends BaseVO implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "WEB_MASTER_AUDIT_DATE")
-	private Date webMasterAuditDate;	
+	private Date webMasterAuditDate;
+	/**
+	 * 优先级(降序)
+	 */
+	@Column(name = "PRIORITY")
+	private Integer priority;
+	/**
+	 * 类别
+	 */
+	@Column(name = "TYPE")
+	private String type;
 	
 	public WorkOrder(){
 		
@@ -528,5 +538,21 @@ public class WorkOrder extends BaseVO implements Serializable{
 
 	public void setWebMasterAuditDate(Date webMasterAuditDate) {
 		this.webMasterAuditDate = webMasterAuditDate;
+	}
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

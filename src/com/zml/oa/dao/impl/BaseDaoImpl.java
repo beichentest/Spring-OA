@@ -58,7 +58,7 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public T getBean(Class<T> obj, Serializable id) throws Exception{
-		return (T) getSession().get(obj.getClass(), id);
+		return (T) getSession().get(obj, id);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -88,6 +88,23 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
 	public Long count(String hql) {
 		return (Long) this.getSession().createQuery(hql).uniqueResult();
 	}
+	
+	@Override
+	public Integer count(String hql,Object ... params) {
+		if(StringUtils.isNotBlank(hql)) {			
+			Query query = this.getSession().createQuery(hql);
+			if(params!=null) {
+				for (int i = 0; i < params.length; i++) {
+					Object object = params[i];
+					query.setParameter(i, object);
+				}
+			}
+			List list = query.list();
+			if(list!=null)
+				return list.size();
+		}
+		return 0;
+	}
 
 	@Override
 	public List<T> findByPage(String hql, int firstResult, int maxResult, String sort, String order) throws Exception {
@@ -100,5 +117,21 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
 		query.setMaxResults(maxResult);
 		return query.list();
 	}
-
+	@Override
+	public List<T> findByPage(String hql, int firstResult, int maxResult, String sort, String order,Object ... params) throws Exception {
+		Session session=sessionFactory.getCurrentSession();
+		if(StringUtils.isNotBlank(sort)&&StringUtils.isNotBlank(order)) {
+			hql = hql+" order by "+sort+" "+order;
+		}
+		Query query = session.createQuery(hql); 
+		if(params!=null) {
+			for (int i = 0; i < params.length; i++) {
+				Object object = params[i];
+				query.setParameter(i, object);
+			}
+		}		
+		query.setFirstResult(firstResult);
+		query.setMaxResults(maxResult);
+		return query.list();
+	}
 }

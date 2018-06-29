@@ -45,7 +45,7 @@ function showToDoTask(){
 	todoTask_datagrid = $("#todoTask").datagrid({
         url: ctx+"/processAction/todoTask",
         width : 'auto',
-		height :  $(this).height()-135,
+		height :  $(document).height()-135,
 		pagination:true,
 		rownumbers:true,
 		border:false,
@@ -75,14 +75,14 @@ function showToDoTask(){
                 		}
 					}
                 },
-                {field : 'user_name',title : '申请人',width : fixWidth(0.2),align : 'center'},                
+                {field : 'user_name',title : '申请人',width : fixWidth(0.05),align : 'center'},                
                 {field : 'title',title : '标题',width : fixWidth(0.2),align : 'center'},
                 {field : 'taskName',title : '当前节点',width : fixWidth(0.1),align : 'center',
                 	formatter:function(value, row){
                 		return "<a class='trace' onclick=\"graphTrace('"+row.processInstanceId+"')\" id='diagram' href='#' pid='"+row.id+"' pdid='"+row.processDefinitionId+"' title='see'>"+value+"</a>";
                 	}
                 },
-                {field : 'owner',title : '负责人',width : fixWidth(0.1),align : 'center',
+                {field : 'owner',title : '负责人',width : fixWidth(0.05),align : 'center',
                 	formatter:function(value, row){
                 		if(value != null && value != row.assign){
                 			return row.assign+" (原执行人："+value+")";
@@ -91,10 +91,18 @@ function showToDoTask(){
                 		}
 					}
                 },  
-                {field : 'createTime',title : '任务创建时间',width : fixWidth(0.1),align : 'center',
+                {field : 'createTime',title : '任务创建时间',width : fixWidth(0.15),align : 'center',
 					formatter:function(value,row){
 						return moment(value).format("YYYY-MM-DD HH:mm:ss");
 					}
+                },{field : 'priority',title : '优先级',width : fixWidth(0.08),align : 'center',
+                	formatter:function(value, row){
+                		if(value=='50'){
+                			return "正常";
+                		}else if(value='60'){
+                			return "紧急";  
+                		}
+                	}
                 },
                 {field : 'suspended',title : '流程状态',width : fixWidth(0.1),align : 'center',
                 	formatter:function(value, row){
@@ -294,7 +302,8 @@ function handleTask(){
     			_url = ctx + "/expenseAction/toApproval/"+row.taskId;
     		}else if("workorder" == row.businessType){
     			_url = ctx + "/workOrderAction/transferAction/"+row.taskId;
-    			if(row.taskDefinitionKey=="coder"||row.taskDefinitionKey=="tester"||row.taskDefinitionKey=="coderUpdate"||row.taskDefinitionKey=="testerUpdate"){
+    			//if(row.taskDefinitionKey=="coder"||row.taskDefinitionKey=="tester"||row.taskDefinitionKey=="coderUpdate"||row.taskDefinitionKey=="testerUpdate"){
+    			if(row.taskDefinitionKey=="coder"||row.taskDefinitionKey=="coderUpdate"){
     				button = [
 	  			          {
 				        	  text: '通过',

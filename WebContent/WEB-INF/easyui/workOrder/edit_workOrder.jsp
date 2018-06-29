@@ -34,6 +34,22 @@
 		<input type="hidden" id="formKey" name="formKey" value="${formKey}" />
 		<input type="hidden" id="completeFlag" name="completeFlag" value="" />
 		<div class="fitem">
+			<label>优先级:</label>	 
+	            <span style="text-align: left;width: 60px;">                       	
+                	<input type="radio" id="priority" name="priority" style="width: 5px;margin-left: 10px;" value="50" <c:if test="${50==workOrder.priority}"> checked="checked" </c:if>/>正常                            	
+               		<input type="radio" id="priority" name="priority" style="width: 5px;margin-left: 10px;" value="60" <c:if test="${60==workOrder.priority}"> checked="checked" </c:if>/> 紧急
+                </span>
+		</div>
+		<div class="fitem">
+	            <label>类别:</label>
+	            <select id="type" class="easyui-combobox" name="type" style="width:280px;">	            	
+				    <option value="需求变更" <c:if test="${'需求变更'==workOrder.type}">selected='selected'</c:if>>需求变更</option>
+				    <option value="新项目" <c:if test="${'新项目'==workOrder.type}">selected='selected'</c:if>>新项目</option>
+				    <option value="设计缺陷" <c:if test="${'设计缺陷'==workOrder.type}">selected='selected'</c:if>>设计缺陷</option>
+				    <option value="非程序类修改" <c:if test="${'非程序类修改'==workOrder.type}">selected='selected'</c:if>>非程序类修改</option>				    
+				</select>	            
+	     </div>
+		<div class="fitem">
 	       <label>涉及项目:</label>
 	          <select id="project_id" class="easyui-combobox" name="project.id" style="width:280px;">
 				    <c:forEach var="project" items="${projectList}">

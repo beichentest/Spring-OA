@@ -14,5 +14,11 @@ public interface IProjectService {
 
 	public List<Project> getProjectList(Page<Project> page,String[] columns, String[] values, String sort, String order) throws Exception;
 
+	public List<Project> getProjectList(String hql,Page<Project> page,Object[] values, String sort, String order) throws Exception;
+	
 	public void doAdd(Project project)throws Exception;
+	
+	public void doDelete(Integer id)throws Exception;
+	
+	public void doUpdate(Project project)throws Exception;
 }

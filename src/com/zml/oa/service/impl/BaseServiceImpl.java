@@ -263,5 +263,18 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
         }
 	}
 	
-	
+	@Override
+	public List<T> getListPage(String hql,  Page<T> page, String sort,
+			String order , Object ... params) throws Exception {
+		List<T> list = new ArrayList<T>();
+		Integer totalSum = this.baseDao.count(hql, params);
+		int[] pageParams = page.getPageParams(totalSum);
+		list = this.baseDao.findByPage(hql, pageParams[0], pageParams[1],sort,order, params);
+		if( list.size()>0 ){
+        	page.setResult(list);
+    	    return list;
+        }else{
+    	    return Collections.emptyList();
+        }		
+	}
 }

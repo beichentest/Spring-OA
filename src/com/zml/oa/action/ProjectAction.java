@@ -1,10 +1,3 @@
-/**
- * Project Name:SpringOA
- * File Name:UserAction.java
- * Package Name:com.zml.oa.action
- * Date:2014-11-9上午12:35:50
- *
- */
 package com.zml.oa.action;
 
 import java.util.ArrayList;
@@ -20,9 +13,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,15 +28,14 @@ import com.zml.oa.entity.Message;
 import com.zml.oa.entity.Project;
 import com.zml.oa.pagination.Page;
 import com.zml.oa.service.IProjectService;
-
 /**
- * @ClassName: UserAction
- * @Description:用户Controller
- * @author: zml
- * @date: 2014-11-9 上午12:35:50
- *
+ * 
+* @ClassName: ProjectAction  
+* @Description: TODO(这里用一句话描述这个类的作用)  
+* @author Administrator  
+* @date 2018年6月29日  
+*
  */
-
 @Controller
 @RequestMapping("/projectAction")
 public class ProjectAction {
@@ -76,14 +70,14 @@ public class ProjectAction {
 	@RequestMapping("/toList")
 	@ResponseBody
 	public Datagrid<Object> userList(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "rows", required = false) Integer rows,String sort,String order,String name) throws Exception{
-		Page<Project> p = new Page<Project>(page, rows);
-		List<String> columns = new ArrayList<String>();
-		List<String> values = new ArrayList<String>();
+		String sql = "select p from Project p where status='0' ";
+		Page<Project> p = new Page<Project>(page, rows);		
+		List<Object> values = new ArrayList<Object>();
 		if(StringUtils.isNotBlank(name)) {
-			columns.add("name");
-			values.add(name);
+			sql +=" and name like ?";
+			values.add("%"+name+"%");
 		}
-		List<Project> projectList = this.projectService.getProjectList(p,columns.toArray(new String[columns.size()]),values.toArray(new String[values.size()]),sort,order);
+		List<Project> projectList = this.projectService.getProjectList(sql, p, values.toArray(), sort, order);
 		List<Object> jsonList=new ArrayList<Object>(); 
 		for (Project project : projectList) {
 			jsonList.add(BeanUtils.describe(project));
@@ -125,6 +119,35 @@ public class ProjectAction {
 	public Message doAdd(@ModelAttribute("project") Project project) throws Exception{		
 		projectService.doAdd(project);
 		return new Message(Boolean.TRUE, "添加成功！");
+	}
+	
+	@RequestMapping(value = "/delete/{id}")
+	@ResponseBody
+	public Message delete(@PathVariable("id") Integer id) throws Exception{
+		if(!com.zml.oa.util.BeanUtils.isBlank(id)){
+			projectService.doDelete(id);			
+			return new Message(Boolean.TRUE, "删除成功！");
+		}else{
+			return new Message(Boolean.FALSE, "删除失败！ID为空！");
+		}
+	}
+	
+	
+	@RequestMapping(value = "/toUpdate/{id}")
+	public String toUpdate(@PathVariable("id") Integer id,Model model) throws Exception{
+		Project project = projectService.getProjectById(id);
+		model.addAttribute("project", project);
+		return "project/update_project";
+	}
+	
+	@RequestMapping(value = "/doUpdate")
+	@ResponseBody
+	public Message doUpdate(@ModelAttribute("project") Project project) throws Exception{
+		Message message = new Message();
+		projectService.doUpdate(project);
+		message.setStatus(Boolean.TRUE);
+		message.setMessage("修改成功！");
+		return message;
 	}
 //	
 //	@RequestMapping(value = "/showUser")
@@ -207,25 +230,6 @@ public class ProjectAction {
 //	}
 //	
 //	
-//	@RequiresPermissions("admin:user:doDelete")
-//	@RequestMapping(value = "/delete/{id}")
-//	@ResponseBody
-//	public Message delete(@PathVariable("id") Integer id,
-//						@Value("#{APP_PROPERTIES['account.user.delete.syntoactiviti']}") Boolean synToActiviti) throws Exception{
-//		if(!BeanUtils.isBlank(id)){
-//			User user = new User();
-//			user.setId(id);
-//			this.userService.doDelete(user, synToActiviti);
-//			//清空认证和权限缓存
-//			Subject currentUser = SecurityUtils.getSubject();
-//			UserRealm ur = new UserRealm();
-//			ur.clearCache(currentUser.getPrincipals());
-//			
-//			return new Message(Boolean.TRUE, "删除成功！");
-//		}else{
-//			return new Message(Boolean.FALSE, "删除失败！ID为空！");
-//		}
-//	}
 //	
 //	@RequiresPermissions("admin:*")
 //	@RequestMapping(value = "/toListOnlineUser")

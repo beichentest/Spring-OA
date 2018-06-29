@@ -44,7 +44,9 @@ function showApply( businessType ){
 	apply_datagrid = $("#"+businessType+"_datagrid").datagrid({
         url: url_,
         width : 'auto',
-		height :  $(this).height()-135,
+        //height: fixHeight(0.8),
+		//height :  $(this).height()-135,
+        height : $(document).height()-135,
 		pagination:true,
 		rownumbers:true,
 		border:false,

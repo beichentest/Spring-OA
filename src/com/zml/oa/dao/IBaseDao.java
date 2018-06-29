@@ -83,6 +83,8 @@ public interface IBaseDao<T> {
 	
 	public List<T> findByPage(final String hql, int firstResult, int maxResult,String sort,String order) throws Exception;
 	
+	public List<T> findByPage(String hql, int firstResult, int maxResult, String sort, String order,Object ... params) throws Exception;
+	
 	/**
 	 * 
 	 * @Title: unique
@@ -100,6 +102,7 @@ public interface IBaseDao<T> {
 	 */
 	public Long count(String hql);
 	
+	public Integer count(String hql,Object ... params);
 	
 	public T loadBean(Class<T> obj, Serializable id) throws Exception;
 }

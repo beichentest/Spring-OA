@@ -22,7 +22,7 @@
 			在此你可以查看您所提交的<span class="label-info"><strong>工单申请</strong></span>，并查看其审批状态。
 		</p>
 	 </div>	
- 	 <div id="toolbar" style="padding:2px 0">
+ 	 <!-- <div id="toolbar" style="padding:2px 0">
 		<table cellpadding="0" cellspacing="0">
 			<tr>
 				<td style="padding-left:2px">
@@ -30,10 +30,10 @@
 				</td>
 			</tr>
 		</table>
-	 </div>
+	 </div> -->
 	 <div id="tabs" class="easyui-tabs">
 	 	<div title="工单申请" closable="true" data-options="selected:true" style="padding:10px;">
-			<table id="workorder_datagrid" title="工单申请"></table>
+			<table id="workorder_datagrid"></table>
 		</div>		
 	</div>
   </body>

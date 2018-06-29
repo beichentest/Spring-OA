@@ -58,26 +58,38 @@
 	                		return row.project.name;
 	                	}  
 	              },
-	              {field : 'applyUser',title : '申请人',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-	              {field : 'businessAuditUser',title : '审核人',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-	              {field : 'coder',title : '开发人',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-	              {field : 'coderAudit',title : '开发审核',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-	              {field : 'tester',title : '测试人',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-	              {field : 'testerAudit',title : '测试审核',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-	              {field : 'webMaster',title : '运维人',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-	              {field : 'webMasterAudit',title : '运维审核',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
-	              {field : 'applyDate',title : '申请时间',width : fixWidth(0.2),align : 'left',sortable: true,
+	              {field : 'testerDate',title : '入库时间',width : fixWidth(0.1),align : 'left',sortable: true,
 	            	  formatter:function(value,row){
 							return moment(value).format("YYYY-MM-DD HH:mm:ss");
 						}  
+	              },	              	              
+	              {field : 'coder',title : '开发人员',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
+	              {field : 'applyUser',title : '申请人',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},	              
+	              {field : 'tester',title : '测试人',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
+	              {field : 'type',title : '类别',width : fixWidth(0.08),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
+	              {field : 'project.home',title : '项目归属',width : fixWidth(0.05),align : 'left',sortable: true, 
+	            	  formatter:function(value, row){
+	                		return row.project.home;
+	                	}  
 	              },
-	              {field : 'verifyDate',title : '确认时间',width : fixWidth(0.2),align : 'left',sortable: true, 
+	              {field : 'project.area',title : '应用地区',width : fixWidth(0.05),align : 'left',sortable: true,
+	            	  formatter:function(value, row){
+	                		return row.project.area;
+	                	}	
+	              },
+	              {field : 'priority',title : '优先级',width : fixWidth(0.05),align : 'left',sortable: true,
 	            	  formatter:function(value,row){
-	            		  	if(value==''||value==null)
-	            		  		return "";
-							return moment(value).format("YYYY-MM-DD HH:mm:ss");
-						}
+	            		  	if(value=='50')
+	            		  		return "正常";
+	            		  	else if(value='60')
+	            		  		return "紧急"
+	            		  	else
+	            		  		return "无"
+						}  
 	              },
+	              {field : 'coderSvn',title : '开发SVN',width : fixWidth(0.2),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
+	              {field : 'coderVersion',title : '更新版本',width : fixWidth(0.05),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
+	              {field : 'developExplain',title : '修改内容',width : fixWidth(0.2),align : 'left',sortable: true, editor : {type:'validatebox',options:{required:true}}},
 	              {field : 'down',title : '下载',width : fixWidth(0.05),align : 'left', 
 	            	  formatter:function(value,row){
 	            		  return "<a class='trace' onclick=\"downloadWord('"+row.id+"')\" id='download' href='#'  title='下载'>下载</a>";

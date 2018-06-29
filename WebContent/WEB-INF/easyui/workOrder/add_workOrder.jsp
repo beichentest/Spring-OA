@@ -41,6 +41,22 @@
   	<div id="dlg" class="easyui-layout" style="padding:10px 20px">
 	    <div class="ftitle"><img src="${ctx }/extend/fromedit.png" style="margin-bottom: -3px;"/> 工单信息</div>
 	    <form id="workOrder_form" method="post">
+	    	<div class="fitem">
+	            <label>优先级:</label>	 
+	            <span style="text-align: left;width: 60px;">                       	
+                <input type="radio" id="priority" name="priority" style="width: 5px;margin-left: 10px;" value="50" checked="checked"/>正常                            	
+               	<input type="radio" id="priority" name="priority" style="width: 5px;margin-left: 10px;" value="60" /> 紧急
+               	</span>
+	        </div>
+	        <div class="fitem">
+	            <label>类别:</label>
+	            <select id="type" class="easyui-combobox" name="type" style="width:280px;">	            	
+				    <option value="需求变更" selected='selected'>需求变更</option>
+				    <option value="新项目">新项目</option>
+				    <option value="设计缺陷">设计缺陷</option>
+				    <option value="非程序类修改">非程序类修改</option>				    
+				</select>	            
+	        </div>
 	        <div class="fitem">
 	            <label>涉及项目:</label>
 	            <select id="project_id" class="easyui-combobox" name="project.id" style="width:280px;">

@@ -13,7 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -554,5 +556,34 @@ public class WorkOrder extends BaseVO implements Serializable{
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public String getProjectName() {
+		if(project!=null&&StringUtils.isNotBlank(project.getName())) {
+			return project.getName();
+		}
+		return "";
+	}
+	
+	public String getHome() {
+		if(project!=null&&StringUtils.isNotBlank(project.getHome())) {
+			return project.getHome();
+		}
+		return "";
+	}
+	
+	public String getArea() {
+		if(project!=null&&StringUtils.isNotBlank(project.getArea())) {
+			return project.getArea();
+		}
+		return "";
+	}
+	
+	public String getPriorityStr() {
+		if(priority!=null&&priority==60) {
+			return "紧急";
+		}else {
+			return "正常";
+		}
 	}
 }

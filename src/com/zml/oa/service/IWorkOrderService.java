@@ -22,4 +22,8 @@ public interface IWorkOrderService {
 	public List<WorkOrder> getWorkOrderList(Page<WorkOrder> page) throws Exception;
 	
 	public List<WorkOrder> getWorkOrderList(Page<WorkOrder> page,String[] columns, String[] values,String sort,String order) throws Exception;
+	
+	public List<WorkOrder> getWorkOrderList(String hql,Page<WorkOrder> page,String sort,String order,Object[] values)throws Exception;
+	
+	public List<WorkOrder> getWorkOrderList(String hql,String sort,String order,Object[] values)throws Exception;
 }

@@ -103,6 +103,14 @@
             <input id="testerSvn" name="testerSvn" class="easyui-textbox easyui-validatebox" required="true">
         </div>
         <div class="fitem">
+            <label>项目归属:</label>
+            <input id="home" name="home" class="easyui-textbox easyui-validatebox" required="true">
+        </div>
+        <div class="fitem">
+            <label>应用地区:</label>
+            <input id="area" name="area" class="easyui-textbox easyui-validatebox" required="true">
+        </div>
+        <div class="fitem">
             <label>编译说明:</label>
             <textarea cols="33" rows="3" name="buildInfo"></textarea>
         </div>

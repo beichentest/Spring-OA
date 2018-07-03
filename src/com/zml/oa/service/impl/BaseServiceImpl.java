@@ -277,4 +277,9 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     	    return Collections.emptyList();
         }		
 	}
+	@Override
+	public List<T> getList(String hql,  String sort,
+			String order , Object ... params) throws Exception{
+		return this.baseDao.find(hql, sort, order, params);
+	}
 }

@@ -134,4 +134,19 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
 		query.setMaxResults(maxResult);
 		return query.list();
 	}
+	@Override
+	public List<T> find(String hql, String sort, String order,Object ... params) throws Exception{
+		Session session=sessionFactory.getCurrentSession();
+		if(StringUtils.isNotBlank(sort)&&StringUtils.isNotBlank(order)) {
+			hql = hql+" order by "+sort+" "+order;
+		}
+		Query query = session.createQuery(hql); 
+		if(params!=null) {
+			for (int i = 0; i < params.length; i++) {
+				Object object = params[i];
+				query.setParameter(i, object);
+			}
+		}
+		return query.list();
+	}
 }

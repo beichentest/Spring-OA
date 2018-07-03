@@ -47,5 +47,7 @@ public interface IBaseService<T> {
 	 
 	 public List<T> getListPage(String hql,  Page<T> page, String sort,String order , Object ... params) throws Exception;
 	
+	 public List<T> getList(String hql,  String sort,String order , Object ... params) throws Exception;
+	 
 	 public T loadBean(final Class<T> obj,final Serializable id) throws Exception;
 }

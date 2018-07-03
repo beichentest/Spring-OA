@@ -102,9 +102,9 @@
 									</li>
 								</ul>
 							</div>
-							<div style="float: left; margin-left: 30px;">
+							<!-- <div style="float: left; margin-left: 30px;">
 								<a href="javascript:void(0);" onclick=""><span class="f_help">是否初始化admin的密码</span></a>
-							</div>
+							</div> -->
 						</div>
 						<div class="clear"></div>
 					</div>

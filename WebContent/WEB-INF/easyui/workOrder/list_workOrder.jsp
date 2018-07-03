@@ -18,12 +18,23 @@
 		</p>
 	</div>
 	
-	<div id="toolbar" style="padding:2px 0">
-		<span>编号:</span>
-		<input id="id" style="line-height:26px;border:1px solid #ccc">
-		<span>申请人:</span>
+	<div id="toolbar" style="padding:2px 0">		
+		<span>发起人:</span>
 		<input id="applyUser" style="line-height:26px;border:1px solid #ccc">
+		<span>项目名称:</span>
+		<input id="projectName" style="line-height:26px;border:1px solid #ccc">
+		<span>类别:</span>
+		<select id="type" style="width:100px;">
+					<option value="" selected='selected'>全部</option>	            	
+				    <option value="需求变更" >需求变更</option>
+				    <option value="新项目">新项目</option>
+				    <option value="设计缺陷">设计缺陷</option>
+				    <option value="非程序类修改">非程序类修改</option>				    
+		</select>
+		<span>入库日期:</span>
+		<input id="beginDate" name="beginDate" type="text" class="easyui-datebox" editable="false">——<input id="endDate" name="endDate" type="text" class="easyui-datebox" editable="false">
 		<a href="#" class="easyui-linkbutton" class="easyui-linkbutton" plain="true" iconCls="icon-search" onclick="doSearch()">查询</a>
+		<a href="#" class="easyui-linkbutton" onclick="return Save_Excel()" iconCls="icon-save" plain="true" title="导出excel文件"></a>
 		<%-- <table cellpadding="0" cellspacing="0">
 			<tr>
 				<td style="padding-left:2px">
@@ -79,9 +90,9 @@
 	              },
 	              {field : 'priority',title : '优先级',width : fixWidth(0.05),align : 'left',sortable: true,
 	            	  formatter:function(value,row){
-	            		  	if(value=='50')
+	            		  	if(value==50)
 	            		  		return "正常";
-	            		  	else if(value='60')
+	            		  	else if(value==60)
 	            		  		return "紧急"
 	            		  	else
 	            		  		return "无"
@@ -129,10 +140,21 @@
   		window.location.href = "downloadWord?id="+id
   	}
   	function doSearch (){
-  		$('#workOrder_datagrid').datagrid('load',{
-  			id: $('#id').val(),
-  			applyUser: $('#applyUser').val()
+  		$('#workOrder_datagrid').datagrid('load',{  			
+  			applyUser: $('#applyUser').val(),
+  			projectName: $('#projectName').val(),
+  			type: $("#type").val(),
+  			beginDate:$("input[name='beginDate']").val(),
+  			endDate:$("input[name='endDate']").val()
   		});
   	}
+  	function Save_Excel() {//导出Excel文件        
+  		var applyUser = $('#applyUser').val();
+		var projectName = $('#projectName').val();
+		var type = $("#type").val();
+		var beginDate = $("input[name='beginDate']").val();
+		var endDate = $("input[name='endDate']").val();		
+        window.location.href = "saveExcel?applyUser="+applyUser+"&projectName="+projectName+"&type="+type+"&beginDate="+beginDate+"&endDate="+endDate;                
+    }
   </script>
 </html>

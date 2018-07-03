@@ -85,6 +85,7 @@ public interface IBaseDao<T> {
 	
 	public List<T> findByPage(String hql, int firstResult, int maxResult, String sort, String order,Object ... params) throws Exception;
 	
+	public List<T> find(String hql, String sort, String order,Object ... params) throws Exception;
 	/**
 	 * 
 	 * @Title: unique

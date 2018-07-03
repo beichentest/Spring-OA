@@ -44,8 +44,8 @@
 	    	<div class="fitem">
 	            <label>优先级:</label>	 
 	            <span style="text-align: left;width: 60px;">                       	
-                <input type="radio" id="priority" name="priority" style="width: 5px;margin-left: 10px;" value="50" checked="checked"/>正常                            	
-               	<input type="radio" id="priority" name="priority" style="width: 5px;margin-left: 10px;" value="60" /> 紧急
+                <input type="radio" id="priority" name="priority" style="width: 15px;margin-left: 10px;" value="50" checked="checked"/>正常                            	
+               	<input type="radio" id="priority" name="priority" style="width: 15px;margin-left: 10px;" value="60" /> 紧急
                	</span>
 	        </div>
 	        <div class="fitem">

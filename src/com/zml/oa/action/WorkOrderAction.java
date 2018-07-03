@@ -53,6 +53,7 @@ import com.zml.oa.service.IVacationService;
 import com.zml.oa.service.IWorkOrderService;
 import com.zml.oa.util.BeanUtils;
 import com.zml.oa.util.DateUtil;
+import com.zml.oa.util.PoiExcelExport;
 import com.zml.oa.util.UserUtil;
 
 /**
@@ -105,32 +106,39 @@ public class WorkOrderAction implements Serializable{
 	 */
 	@RequestMapping("/toList")
 	@ResponseBody
-	public Datagrid<WorkOrder> toList(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "rows", required = false) Integer rows,String sort,String order,String id,String applyUser) throws Exception{
+	public Datagrid<WorkOrder> toList(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "rows", required = false) Integer rows,String sort,String order,String applyUser,String projectName,String type,String beginDate,String endDate) throws Exception{
+		String hql = "select w from WorkOrder w where w.status='"+BaseVO.APPROVAL_SUCCESS+"'";
 		Page<WorkOrder> p = new Page<WorkOrder>(page, rows);
 		if(StringUtils.isBlank(sort)) {
 			sort = "applyDate";
 			order = "desc";
 		}
-		List<String> columns = new ArrayList<String>();
-		List<String> values = new ArrayList<String>();
-		
-		columns.add("status");
-		values.add(BaseVO.APPROVAL_SUCCESS);
-		if(StringUtils.isNotBlank(id)) {
-			columns.add("id");
-			values.add(id);			
+		List<Object> values = new ArrayList<Object>();
+		if(StringUtils.isNotBlank(projectName)) {
+			hql += " and project.name like ? ";
+			values.add("%"+projectName+"%");			
+		}
+		if(StringUtils.isNotBlank(type)) {
+			hql += " and type=? ";
+			values.add(type);			
 		}
 		if(StringUtils.isNotBlank(applyUser)) {			
-			columns.add("applyUser");
+			hql += " and applyUser=? ";
 			values.add(applyUser);
 		}
-		
-		List<WorkOrder> workOrderList = this.workOrderService.getWorkOrderList(p,columns.toArray(new String[columns.size()]),values.toArray(new String[values.size()]),sort,order);
+		if(StringUtils.isNotBlank(beginDate)&&StringUtils.isNotBlank(endDate)) {			
+			hql += " and testerDate >= ?  and testerDate<=? ";
+			values.add(DateUtil.StringToDate(beginDate, "yyyy-MM-dd"));
+			values.add(DateUtil.StringToDate(endDate, "yyyy-MM-dd"));
+		}
+		List<WorkOrder> workOrderList = this.workOrderService.getWorkOrderList(hql, p, sort, order, values.toArray());
 		return new Datagrid<WorkOrder>(p.getTotal(), workOrderList);
 	}
 	
 	@RequestMapping(value = "/workOrderDatagrid")
-	public String toList_page() throws Exception{
+	public String toList_page(Model model) throws Exception{
+//		List<Project> projectList = projectService.findByOnline();
+//		model.addAttribute("projectList", projectList);
 		return "workOrder/list_workOrder";
 	}
 	
@@ -606,11 +614,17 @@ public class WorkOrderAction implements Serializable{
 	@SuppressWarnings("serial")
 	@RequestMapping(value="/downloadWord")
 	public void downloadWord(HttpServletRequest request,HttpServletResponse response,Integer id) throws Exception {
+		String templatePath = "";
 		WorkOrder workOrder = workOrderService.findById(id);
+		if(workOrder.getPriority()!=null&&workOrder.getPriority()==60) {
+			templatePath = "/template/template_60.docx";
+		}else {
+		    templatePath = "/template/template_50.docx";
+		}
         // 获取应用的根路径
         String servletContextRealPath = request.getServletContext().getRealPath("");
         // 获取模板文件
-        File templateFile = new File(servletContextRealPath + "/template/template.docx");
+        File templateFile = new File(servletContextRealPath + templatePath);
        
         // 替换读取到的 word 模板内容的指定字段
         Map<String, Object> params = new HashMap<String, Object>();
@@ -638,8 +652,10 @@ public class WorkOrderAction implements Serializable{
         params.put("WEB_DATE",DateUtil.DateToString(workOrder.getDeployDate(),"yyyy-MM-dd"));
         params.put("W_AUDIT",workOrder.getWebMasterAudit());
         params.put("W_DATE",DateUtil.DateToString(workOrder.getWebMasterAuditDate(),"yyyy-MM-dd"));
-        params.put("VERIFY_DATE",DateUtil.DateToString(workOrder.getVerifyDate(),"yyyy-MM-dd"));          
-        
+        params.put("VERIFY_DATE",DateUtil.DateToString(workOrder.getVerifyDate(),"yyyy-MM-dd"));
+        params.put("HOME", workOrder.getProject().getHome());
+        params.put("TYPE", workOrder.getType());
+        params.put("AREA", workOrder.getProject().getArea());
         XWPFTemplate template = XWPFTemplate.compile(templateFile)
 				.render(params);
         // 输出 word 内容文件流，提供下载
@@ -657,5 +673,37 @@ public class WorkOrderAction implements Serializable{
         servletOS.close();
         ostream.close();
         template.close();
+	}
+	@SuppressWarnings("serial")
+	@RequestMapping(value="/saveExcel")
+	public void saveExcel(HttpServletRequest request,HttpServletResponse response,String applyUser,String projectName,String type,String beginDate,String endDate) throws Exception {
+		String hql = "select w from WorkOrder w where w.status='"+BaseVO.APPROVAL_SUCCESS+"'";
+		String sort = "applyDate";
+		String order = "desc";
+		List<Object> values = new ArrayList<Object>();
+		if(StringUtils.isNotBlank(projectName)) {
+			hql += " and project.name like ? ";
+			values.add("%"+projectName+"%");			
+		}
+		if(StringUtils.isNotBlank(type)) {
+			hql += " and type=? ";
+			values.add(type);			
+		}
+		if(StringUtils.isNotBlank(applyUser)) {			
+			hql += " and applyUser=? ";
+			values.add(applyUser);
+		}
+		if(StringUtils.isNotBlank(beginDate)&&StringUtils.isNotBlank(endDate)) {			
+			hql += " and testerDate >= ?  and testerDate<=? ";
+			values.add(DateUtil.StringToDate(beginDate, "yyyy-MM-dd"));
+			values.add(DateUtil.StringToDate(endDate, "yyyy-MM-dd"));
+		}
+		List<WorkOrder> workOrders =  workOrderService.getWorkOrderList(hql, sort, order, values.toArray());
+		PoiExcelExport pee = new PoiExcelExport(response,"软件版本发布工单","sheet1");
+		
+		String titleColumn[] = {"id","projectName","testerDate","coder","applyUser","tester","type","home","area","priorityStr","coderSvn","coderVersion","developExplain"};
+        String titleName[] = {"工单编号","项目名称","入库时间","开发人员","申请人","测试人员","类别","项目归属","应用地区","优先级","SVN地址","更新版本","修改内容"};
+        int titleSize[] = {13,13,13,13,13,13,13,13,13,13,13,13,13};        
+		pee.wirteExcel(titleColumn, titleName, titleSize, workOrders);
 	}
 }
